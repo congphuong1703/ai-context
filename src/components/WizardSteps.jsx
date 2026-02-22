@@ -2,8 +2,7 @@
 
 import { OptionCard, OptionCardIcon, OptionCardCheck } from "./OptionCard";
 import { DeviconImg } from "./DeviconImg";
-import { DEFAULTS } from "@/data/steps";
-import { CONVENTIONS } from "@/data/conventions";
+import { DEFAULTS, CONVENTIONS } from "@/data";
 import { useTranslations } from "next-intl";
 import { Code2 } from "lucide-react";
 import { CONVENTION_ICONS, CONVENTION_SECTION_ICONS, IDE_ICONS } from "@/lib/optionIcons";

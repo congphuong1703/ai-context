@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useWizardData } from "@/hooks/useWizardData";
 import { useTranslations } from "next-intl";
-import { DEFAULTS } from "@/data";
 import { generateOutput } from "@/lib/generateRules";
 import { Header } from "./Header";
 import { TemplateStep } from "./TemplateStep";
@@ -14,6 +13,7 @@ import { ChevronRight } from "lucide-react";
 
 const initialConfig = {
   language: null,
+  framework: null,
   convention: null,
   eslintRequired: null,
   prettierRequired: null,
@@ -30,11 +30,12 @@ export function TemplatePage() {
 
   const applyConfig = useCallback((cfg) => {
     setConfig({
-      language: cfg.language ?? DEFAULTS.language,
-      convention: cfg.convention ?? DEFAULTS.convention,
-      eslintRequired: cfg.eslintRequired ?? DEFAULTS.eslintRequired,
-      prettierRequired: cfg.prettierRequired ?? DEFAULTS.prettierRequired,
-      ide: cfg.ide ?? DEFAULTS.ide,
+      language: cfg.language ?? null,
+      framework: cfg.framework ?? null,
+      convention: cfg.convention ?? null,
+      eslintRequired: cfg.eslintRequired ?? null,
+      prettierRequired: cfg.prettierRequired ?? null,
+      ide: cfg.ide ?? null,
     });
   }, []);
 
@@ -74,10 +75,10 @@ export function TemplatePage() {
     setConfig(initialConfig);
   };
 
-  const lang = config.language ?? DEFAULTS.language;
-  const ide = config.ide ?? DEFAULTS.ide;
-  const getL = () => data?.languages?.find((x) => x.id === lang)?.label ?? "";
-  const getIDE = () => data?.ides?.find((x) => x.id === ide)?.label ?? "";
+  const getL = () =>
+    config.language ? (data?.languages?.find((x) => x.id === config.language)?.label ?? "") : "";
+  const getIDE = () =>
+    config.ide ? (data?.ides?.find((x) => x.id === config.ide)?.label ?? "") : "";
 
   if (loading && !data) {
     return (
@@ -95,7 +96,7 @@ export function TemplatePage() {
       <div className="fixed w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(91,80,230,0.15)_0%,transparent_70%)] -top-[200px] -right-[200px] pointer-events-none z-0 animate-orb dark:bg-[radial-gradient(circle,rgba(108,99,255,0.12)_0%,transparent_70%)]" />
       <Header />
       <div className="relative z-[1] pt-[62px] min-h-screen flex flex-col">
-        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-10">
+        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
           {result ? (
             <div className="pt-8">
               <ResultPanel
@@ -119,7 +120,7 @@ export function TemplatePage() {
                   ← {t("backToChoice")}
                 </Link>
               </div>
-              <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-xl">
+              <div className="overflow-hidden">
                 <TemplateStep selectedId={selectedTemplateId} onSelect={handleSelectTemplate} />
                 <div className="flex items-center justify-end gap-3 px-6 sm:px-8 py-6 border-t border-border">
                   <button

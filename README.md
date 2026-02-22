@@ -2,44 +2,106 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/congphuong1703/ai-context?style=social)](https://github.com/congphuong1703/ai-context)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+**AI Context** is a small web app that generates **AI coding rules files** (e.g. `.cursorrules`, `CLAUDE.md`, `.github/copilot-instructions.md`) tailored to your stack. Pick language, framework, naming convention, lint/format preferences, and AI tool — then get a ready-to-paste rules file and optional NPX install command.
 
-## Getting Started
+- **Open source** · No account required
+- **i18n**: English & Tiếng Việt
 
-First, run the development server:
+---
+
+## What it does
+
+- Lets you **choose a preset template** (e.g. Next.js + Cursor, Python + Django + Claude) or **customize step by step** (language → framework → convention → AI tool).
+- **Generates a single rules file** with:
+  - Role & expertise
+  - Architecture, code quality, security, testing, error-handling rules
+  - Language- and framework-specific rules
+  - Naming convention (camel / snake / pascal / kebab)
+  - ESLint / Prettier required or optional
+  - IDE/AI-tool workflow notes
+  - Prompt templates (implement, review, refactor, debug, write tests)
+- Provides **Copy**, **Download**, and (when applicable) **NPX install** with the options you selected. Any step you skip is not forced to a default.
+
+---
+
+## What it has
+
+- **Templates**: 10 preset stacks (Next.js, React, Python, Go+Gin, Rust+Axum, Django, Laravel, minimal, etc.) with full config (language, framework, convention, ESLint, Prettier, IDE).
+- **Customize wizard**: 4 steps — Programming language → Framework & library → Convention (naming + ESLint + Prettier) → AI coding tool. Skip any step; no default applied for skipped steps.
+- **Languages**: TypeScript, JavaScript, Python, Java, Kotlin, PHP, Go, Rust, C#, Ruby, Swift, Scala, Dart, Elixir, Lua, R.
+- **Frameworks**: Filtered by language (e.g. Next.js, React, Vue/Nuxt, NestJS, Django, FastAPI, Spring, Laravel, Gin, Axum, …).
+- **Conventions**: camelCase, snake_case, PascalCase, kebab-case.
+- **AI tools**: Cursor, Claude Code, Windsurf, GitHub Copilot, Continue, Cody, Zed, JetBrains AI, Codeium, Tabnine, Replit, v0, …
+- **Rules & skills**: All rule blocks and prompt templates are grouped by type in `src/data/rulesAndSkills.js` (by language, framework, convention, IDE, core, prompts).
+- **i18n**: UI in `src/messages/en.json` and `vi.json` (next-intl).
+- **Local fonts**: JetBrains Mono (and Geist for sans) — no Google Fonts CDN.
+
+---
+
+## How to use (as a visitor)
+
+1. Open the site (e.g. [GitHub Pages / Vercel URL] or run locally — see **Install**).
+2. **Use a template**: Click **Use a template** → pick a preset (e.g. Next.js + Cursor) → **Generate Rules** → Copy or Download the file, or run the shown NPX command in your project root.
+3. **Customize**: Click **Customize step by step** → go through Language → Framework → Convention → AI tool (skip any step you like) → **Generate Rules** → Copy / Download / NPX as above.
+4. Put the generated file in your project root (e.g. `.cursorrules`). Your AI assistant will use it according to each tool’s docs.
+
+---
+
+## Install (developers)
+
+### Prerequisites
+
+- Node.js 18+
+- npm / yarn / pnpm / bun
+
+### Clone and run
 
 ```bash
+git clone https://github.com/congphuong1703/ai-context.git
+cd ai-context
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command                | Description             |
+| ---------------------- | ----------------------- |
+| `npm run dev`          | Start dev server        |
+| `npm run build`        | Production build        |
+| `npm run start`        | Start production server |
+| `npm run lint`         | Run ESLint              |
+| `npm run format`       | Run Prettier            |
+| `npm run format:check` | Check formatting        |
 
-### Conventions
+### Conventions (for contributors)
 
-- **Tailwind**: Prefer canonical class names. Enable **suggestCanonicalClasses** in the [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) extension so the editor suggests the canonical form of classes (e.g. `overflow-hidden` instead of equivalent variants).
-- **i18n**: UI strings are in `src/messages/en.json` and `src/messages/vi.json`; the app uses `next-intl` with locale from `AppProvider`.
+- **Tailwind**: Prefer canonical class names (e.g. `overflow-hidden`). Use Tailwind CSS IntelliSense with **suggestCanonicalClasses** if available.
+- **i18n**: All UI strings in `src/messages/en.json` and `src/messages/vi.json`; app uses `next-intl` with locale from `AppProvider`.
+- **Data**: Single source in `src/data/appData.js`; rules/skills in `src/data/rulesAndSkills.js`. No separate API or JSON for wizard data.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Contribute
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Fork** the repo and clone it.
+2. Create a **branch**: `git checkout -b feature/your-feature` or `fix/your-fix`.
+3. Make changes. Run `npm run lint` and `npm run format:check` (and fix if needed).
+4. **Commit** with a clear message (e.g. `feat: add Ruby on Rails template`).
+5. **Push** and open a **Pull Request** on [congphuong1703/ai-context](https://github.com/congphuong1703/ai-context).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ideas to contribute:
 
-## Deploy on Vercel
+- New **templates** in `src/data/appData.js` (ensure each template has all steps: language, framework, convention, eslintRequired, prettierRequired, ide).
+- New **languages / frameworks / IDEs** in `appData.js` and (if needed) rules in `src/data/rulesAndSkills.js`.
+- New or improved **rule blocks** or **prompt templates** in `rulesAndSkills.js`.
+- **Translations**: extend or fix `src/messages/en.json` and `vi.json`.
+- **Docs**: fix or expand this README.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT — see [LICENSE](LICENSE).

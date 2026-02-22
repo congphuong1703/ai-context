@@ -1,8 +1,8 @@
 /**
- * Devicon icon names for languages and IDEs.
- * SVG URL: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/<name>/<name>-original.svg
+ * Icon file names for languages, frameworks, and IDEs.
+ * SVG files live in public/icons/<name>.svg (served at /icons/<name>.svg).
  */
-const CDN = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons";
+const ICONS_BASE = "/icons";
 
 export const LANGUAGE_DEVICON = {
   typescript: "typescript",
@@ -29,6 +29,7 @@ export const FRAMEWORK_DEVICON = {
   react: "react",
   vuenuxt: "vuejs",
   nestjs: "nestjs",
+  jakarta: "jakarta",
   svelte: "svelte",
   remix: "remix",
   astro: "astro",
@@ -68,37 +69,37 @@ export const FRAMEWORK_DEVICON = {
 
 /** IDE/tool ids that have a devicon (vscode, jetbrains, etc.). Others fall back to Lucide. */
 export const IDE_DEVICON = {
-  cursor: null, // use Lucide
-  claude: null,
-  windsurf: null,
-  copilot: "github", // or "github" for Git
+  cursor: "cursor", // use Lucide
+  claude: "claude",
+  windsurf: "windsurf",
+  copilot: "copilot", // or "github" for Git
   codeium: null,
-  gemini: null,
+  gemini: "gemini",
   continue: null,
   cody: null,
   zed: null,
   jetbrains: "jetbrains",
   tabnine: null,
   replit: "replit",
-  v0: null,
-  antigravity: null,
+  v0: "v0",
+  antigravity: "antigravity",
   codex: null,
 };
 
 export function getLanguageIconUrl(languageId) {
   const name = LANGUAGE_DEVICON[languageId];
   if (!name) return null;
-  return `${CDN}/${name}/${name}-original.svg`;
+  return `${ICONS_BASE}/${name}.svg`;
 }
 
 export function getFrameworkIconUrl(frameworkId) {
   const name = FRAMEWORK_DEVICON[frameworkId];
   if (!name) return null;
-  return `${CDN}/${name}/${name}-original.svg`;
+  return `${ICONS_BASE}/${name}.svg`;
 }
 
 export function getIdeIconUrl(ideId) {
   const name = IDE_DEVICON[ideId];
   if (!name) return null;
-  return `${CDN}/${name}/${name}-original.svg`;
+  return `${ICONS_BASE}/${name}.svg`;
 }

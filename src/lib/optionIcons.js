@@ -22,6 +22,11 @@ export const TEMPLATE_ICONS = {
   "python-claude": FileCode,
   "ts-windsurf": Wind,
   "minimal-cursor": Sparkles,
+  "go-gin-cursor": Code2,
+  "rust-axum-cursor": Code2,
+  "python-django-claude": FileCode,
+  "php-laravel-cursor": FileCode,
+  "nextjs-cursor-full": Globe,
 };
 
 /** Icons for IDEs / AI tools */

@@ -1,10 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LANGUAGES } from "@/data/languages";
-import { CONVENTIONS } from "@/data/conventions";
-import { IDES } from "@/data/ides";
-import { STACK_TEMPLATES } from "@/data/templates";
+import { LANGUAGES, CONVENTIONS, IDES, STACK_TEMPLATES } from "@/data";
 import { Code2, LayoutTemplate, Type, Bot } from "lucide-react";
 
 const STATS = [

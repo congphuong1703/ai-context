@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useWizardData } from "@/hooks/useWizardData";
 import { useTranslations } from "next-intl";
-import { TOTAL_STEPS, DEFAULTS } from "@/data";
+import { TOTAL_STEPS } from "@/data";
 import { generateOutput } from "@/lib/generateRules";
 import { Header } from "./Header";
 import { StepIndicator } from "./StepIndicator";
@@ -35,12 +35,12 @@ export function CustomizePage() {
 
   const doGenerate = useCallback(() => {
     const out = generateOutput({
-      language: config.language ?? DEFAULTS.language,
-      framework: config.framework ?? DEFAULTS.framework,
-      convention: config.convention ?? DEFAULTS.convention,
-      eslintRequired: config.eslintRequired ?? DEFAULTS.eslintRequired,
-      prettierRequired: config.prettierRequired ?? DEFAULTS.prettierRequired,
-      ide: config.ide ?? DEFAULTS.ide,
+      language: config.language,
+      framework: config.framework,
+      convention: config.convention,
+      eslintRequired: config.eslintRequired,
+      prettierRequired: config.prettierRequired,
+      ide: config.ide,
     });
     setResult(out);
   }, [config]);
@@ -77,10 +77,10 @@ export function CustomizePage() {
     setConfig(initialConfig);
   };
 
-  const lang = config.language ?? DEFAULTS.language;
-  const ide = config.ide ?? DEFAULTS.ide;
-  const getL = () => data?.languages?.find((x) => x.id === lang)?.label ?? "";
-  const getIDE = () => data?.ides?.find((x) => x.id === ide)?.label ?? "";
+  const getL = () =>
+    config.language ? (data?.languages?.find((x) => x.id === config.language)?.label ?? "") : "";
+  const getIDE = () =>
+    config.ide ? (data?.ides?.find((x) => x.id === config.ide)?.label ?? "") : "";
 
   const isResult = !!result;
   const common = { config, set, data, stepIndex: step, totalSteps: TOTAL_STEPS };
@@ -109,7 +109,7 @@ export function CustomizePage() {
       <div className="fixed w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(91,80,230,0.15)_0%,transparent_70%)] -top-[200px] -right-[200px] pointer-events-none z-0 animate-orb dark:bg-[radial-gradient(circle,rgba(108,99,255,0.12)_0%,transparent_70%)]" />
       <Header />
       <div className="relative z-[1] pt-[62px] min-h-screen flex flex-col">
-        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-10">
+        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
           {isResult ? (
             <div className="pt-10">
               <ResultPanel
@@ -144,7 +144,7 @@ export function CustomizePage() {
                 )}
               </div>
               <StepIndicator step={step} />
-              <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-xl">
+              <div className="overflow-hidden">
                 {renderStepContent()}
                 <div className="flex items-center justify-between py-6 px-6 sm:px-8 border-t border-border gap-3 flex-wrap">
                   <button

@@ -13,7 +13,7 @@ export function DeviconImg({ type, id, className = "w-10 h-10", alt = "" }) {
   const url = getDeviconUrl(type, id);
   if (!url) return null;
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- external CDN URLs, dynamic per id
+    // eslint-disable-next-line @next/next/no-img-element -- local /icons/*.svg, dynamic per id
     <img src={url} alt={alt} className={className} loading="lazy" decoding="async" />
   );
 }

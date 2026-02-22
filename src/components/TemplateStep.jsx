@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { STACK_TEMPLATES } from "@/data/templates";
+import { STACK_TEMPLATES } from "@/data";
 import { TEMPLATE_ICONS } from "@/lib/optionIcons";
 import { OptionCard, OptionCardCheck } from "./OptionCard";
 

@@ -16,30 +16,41 @@ export function ResultPanel({
 }) {
   const t = useTranslations("common");
   const [tab, setTab] = useState("rules");
-  const lang = config.language ?? "typescript";
-  const ide = config.ide ?? "cursor";
   const npxPkg = "ai-context";
-  const npxCmd = `npx ${npxPkg}@latest init --lang=${lang} --ide=${ide}`;
+  const npxArgs = [];
+  if (config.language != null) npxArgs.push(`--lang=${config.language}`);
+  if (config.framework != null) npxArgs.push(`--framework=${config.framework}`);
+  if (config.convention != null) npxArgs.push(`--convention=${config.convention}`);
+  if (config.eslintRequired === true) npxArgs.push("--eslint");
+  if (config.prettierRequired === true) npxArgs.push("--prettier");
+  if (config.ide != null) npxArgs.push(`--ide=${config.ide}`);
+  const npxCmd =
+    npxArgs.length > 0
+      ? `npx ${npxPkg}@latest init ${npxArgs.join(" ")}`
+      : `npx ${npxPkg}@latest init`;
+
   const summaryChips = [
-    getL(),
-    config.convention ?? "—",
-    config.eslintRequired === true ? "ESLint ✓" : "",
-    config.prettierRequired === true ? "Prettier ✓" : "",
-    getIDE(),
-  ].filter(Boolean);
+    getL() || null,
+    config.convention ?? null,
+    config.eslintRequired === true ? "ESLint" : null,
+    config.prettierRequired === true ? "Prettier" : null,
+    getIDE() || null,
+  ].filter((s) => s != null && s !== "" && s !== "—");
 
   return (
     <div className="animate-fade-up">
-      <div className="flex flex-wrap items-center gap-2 mb-5 p-4 px-5 bg-accent/10 border border-accent/20 rounded-[10px]">
-        {summaryChips.map((s, i, arr) => (
-          <span key={`${s}-${i}`} className="flex items-center gap-2">
-            <span className="py-1 px-3 rounded-full bg-accent/20 border border-accent/30 text-xs font-semibold text-accent font-mono">
-              {s}
+      {summaryChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-5 p-4 px-5 bg-accent/10 border border-accent/20 rounded-[10px]">
+          {summaryChips.map((s, i, arr) => (
+            <span key={`${s}-${i}`} className="flex items-center gap-2">
+              <span className="py-1 px-3 rounded-full bg-accent/20 border border-accent/30 text-xs font-semibold text-accent font-mono">
+                {s}
+              </span>
+              {i < arr.length - 1 && <span className="text-ink3 text-sm">›</span>}
             </span>
-            {i < arr.length - 1 && <span className="text-ink3 text-sm">›</span>}
-          </span>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_380px]">
         {/* Code panel */}
@@ -90,7 +101,7 @@ export function ResultPanel({
               </button>
             ))}
           </div>
-          <div className="overflow-y-auto max-h-[65vh] py-5 px-6">
+          <div className="overflow-y-auto max-h-[100vh] py-5 px-6">
             <pre className="font-mono text-xs leading-[1.8] text-ink2 whitespace-pre-wrap break-words">
               {tab === "rules"
                 ? result.content
@@ -177,7 +188,13 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
                 </code>{" "}
                 in your project root
               </>,
-              <>Open {getIDE()} — the file is auto-detected</>,
+              <>
+                {getIDE() ? (
+                  <>Open {getIDE()} — the file is auto-detected</>
+                ) : (
+                  <>Open your AI editor — the file is auto-detected</>
+                )}
+              </>,
               <>
                 In AI Composer/Chat, type{" "}
                 <code className="font-mono text-[11px] bg-surface2 px-1.5 py-0.5 rounded text-accent">
@@ -225,7 +242,8 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
             </button>
           </div>
           <p className="text-xs text-ink3 leading-[1.6]">
-            Every teammate with Cursor / {getIDE()} will automatically use the same AI coding rules.
+            Every teammate with {getIDE() ? `Cursor / ${getIDE()}` : "your AI editor"} will
+            automatically use the same AI coding rules.
           </p>
         </div>
       </div>
