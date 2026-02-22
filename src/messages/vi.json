@@ -55,7 +55,7 @@
     "rulesMustPrettier": "Rules bắt buộc theo Prettier project",
     "prettierOptionalDesc": "Prettier tùy chọn",
     "stepNum": "Bước {step} / {total}",
-    "choiceSectionTitle": "Chọn hướng đi",
+    "choiceSectionTitle": "Chọn stack",
     "statsSectionTitle": "Tổng quan",
     "howItWorksSectionTitle": "Cách hoạt động",
     "stepFramework": "Framework & thư viện",
