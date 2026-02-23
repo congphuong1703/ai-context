@@ -12,7 +12,7 @@ export { SKILLS_AGENT_BY_LANGUAGE } from "./languages";
 export { SKILLS_AGENT_BY_FRAMEWORK } from "./frameworks";
 export { SKILLS_AGENT_BY_LIBRARY } from "./libraries";
 export { SKILLS_AGENT_BY_DOMAIN } from "./domains";
-export { SKILLS_AGENT_UNIVERSAL } from "./universal";
+export { SKILLS_AGENT_UNIVERSAL, formatSkillToMarkdown } from "./universal";
 
 /**
  * Returns a single block of agent skills (7-part format) for the given config.

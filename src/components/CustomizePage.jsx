@@ -55,14 +55,17 @@ export function CustomizePage() {
     setResult(out);
   }, [config]);
 
-  const next = () => {
+  const advanceStepOrGenerate = () => {
     if (step < TOTAL_STEPS - 1) setStep((s) => s + 1);
     else doGenerate();
   };
 
+  const next = () => {
+    advanceStepOrGenerate();
+  };
+
   const skip = () => {
-    if (step < TOTAL_STEPS - 1) setStep((s) => s + 1);
-    else doGenerate();
+    advanceStepOrGenerate();
   };
 
   const back = () => setStep((s) => Math.max(0, s - 1));

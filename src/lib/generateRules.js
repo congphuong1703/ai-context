@@ -16,6 +16,12 @@ import {
   RULES_ROLE_BEHAVIOR,
   RULES_SECURITY,
   RULES_TESTING,
+  SKILLS_AGENT_UNIVERSAL,
+  SKILLS_AGENT_BY_LANGUAGE,
+  SKILLS_AGENT_BY_FRAMEWORK,
+  SKILLS_AGENT_BY_LIBRARY,
+  SKILLS_AGENT_BY_DOMAIN,
+  formatSkillToMarkdown,
 } from "@/data";
 import { formatDate } from "@/lib/dateFormats";
 
@@ -42,14 +48,10 @@ export function generateOutput(config) {
   const filename = ide ? IDES.find((x) => x.id === ide)?.file || ".cursorrules" : ".cursorrules";
 
   const langRules = language ? RULES_BY_LANGUAGE[language] || "" : "";
-  const fwRules = frameworks
-    .map((id) => RULES_BY_FRAMEWORK[id] || "")
-    .filter(Boolean)
-    .join("\n\n");
-  const libRules = libraries
-    .map((id) => RULES_BY_LIBRARY[id] || "")
-    .filter(Boolean)
-    .join("\n\n");
+  const fwRuleBlocks = frameworks.map((id) => RULES_BY_FRAMEWORK[id] || "").filter(Boolean);
+  const fwRules = fwRuleBlocks.join("\n\n");
+  const libRuleBlocks = libraries.map((id) => RULES_BY_LIBRARY[id] || "").filter(Boolean);
+  const libRules = libRuleBlocks.join("\n\n");
   const agentSkillsBlock = getAgentSkillsForConfig(config);
   const hasUiStack = libraries.some((id) => id === "tailwind" || id === "shadcn");
   const uiStylingBlock = hasUiStack ? RULES_UI_STYLING : "";
@@ -82,6 +84,13 @@ export function generateOutput(config) {
 # ────────────────────────────────
 # Last updated: ${formatDate("ISO_DATE")}
 
+
+## How AI agents should use project rules and skills
+
+- Treat these rules and skills as an additive baseline for this project.
+- Treat files under \".ai/rules/ai-contexts\" and \".ai/skills/ai-contexts\" as extra guidance
+- Never overwrite or ignore existing repository rules or skills if conflicts occur with ai-contexts rules and skills.
+
 ${RULES_UNIVERSAL_FOUNDATION}
 
 ${langRules}
@@ -113,6 +122,12 @@ ${promptsBlock}
 # ────────────────────────────────
 # Last updated: ${formatDate("ISO_DATE")}
 
+## How AI agents should use project rules and skills
+
+- Treat these rules and skills as an additive baseline for this project.
+- Treat files under \".ai/rules/ai-contexts\" and \".ai/skills/ai-contexts\" as extra guidance
+- Never overwrite or ignore existing repository rules or skills if conflicts occur with ai-contexts rules and skills.
+
 ${RULES_UNIVERSAL_FOUNDATION}
 
 ${langRules}
@@ -143,46 +158,130 @@ ${promptsBlock}
 
   // IDE-specific folder mapping (rulesDir + whether to still emit root file)
   const ideEntry = ide ? IDES.find((x) => x.id === ide) : null;
-  const ideRulesDir = ideEntry && "rulesDir" in ideEntry ? (ideEntry.rulesDir ?? null) : null;
+  const rawIdeRulesDir = ideEntry && "rulesDir" in ideEntry ? (ideEntry.rulesDir ?? null) : null;
+  // Fallback: nếu IDE không có rulesDir riêng, dùng thư mục chung .ai
+  const ideRulesDir = rawIdeRulesDir ?? ".ai";
   const ideMainFileAtRoot =
     ideEntry && "mainFileAtRoot" in ideEntry ? ideEntry.mainFileAtRoot !== false : true;
 
-  /** Split files for CLI: rules + skills (relative to IDE's rulesDir when present).
-   * We always place our files under an `ai-contexts` subfolder so they are
-   * clearly separated from user-defined rules in the same IDE folder.
+  /** Split files for CLI
+   * - Rules go under    <rulesDir>/rules/ai-contexts/
+   * - Skills go under   <rulesDir>/skills/ai-contexts/
+   * để IDE phân biệt rõ với rules người dùng tự tạo.
    */
-  const cliFiles = [
+  const cliFiles = [];
+
+  // Universal rule sections (foundation)
+  cliFiles.push(
     {
-      dir: "ai-contexts",
+      dir: "rules/ai-contexts",
       filename: "naming-convention.md",
       content: `# Naming convention\n\n${conventionRules}\n`,
     },
     {
-      dir: "ai-contexts",
+      dir: "rules/ai-contexts",
       filename: "git-commit.md",
       content: `# Git & collaboration\n\n${RULES_GIT_COLLABORATION}\n`,
     },
     {
-      dir: "ai-contexts",
+      dir: "rules/ai-contexts",
       filename: "role-behavior.md",
       content: `# Role & behavior\n\n${RULES_ROLE_BEHAVIOR}\n`,
     },
     {
-      dir: "ai-contexts",
+      dir: "rules/ai-contexts",
       filename: "security.md",
       content: `# Security\n\n${RULES_SECURITY}\n`,
     },
     {
-      dir: "ai-contexts",
+      dir: "rules/ai-contexts",
       filename: "testing.md",
       content: `# Testing\n\n${RULES_TESTING}\n`,
-    },
-    {
-      dir: "ai-contexts",
-      filename: "agents.md",
-      content: `# Agent skills\n\n${skillsContent}\n`,
-    },
-  ];
+    }
+  );
+
+  // Language-specific rules (nếu có)
+  if (language && langRules) {
+    cliFiles.push({
+      dir: "rules/ai-contexts",
+      filename: `language-${language}.md`,
+      content: `# Language rules: ${L}\n\n${langRules}\n`,
+    });
+  }
+
+  // Framework-specific rules (cho từng framework đã chọn)
+  frameworks.forEach((id) => {
+    const block = RULES_BY_FRAMEWORK[id];
+    if (!block) return;
+    cliFiles.push({
+      dir: "rules/ai-contexts",
+      filename: `framework-${id}.md`,
+      content: `# Framework rules: ${id}\n\n${block}\n`,
+    });
+  });
+
+  // Library-specific rules (cho từng library đã chọn)
+  libraries.forEach((id) => {
+    const block = RULES_BY_LIBRARY[id];
+    if (!block) return;
+    cliFiles.push({
+      dir: "rules/ai-contexts",
+      filename: `library-${id}.md`,
+      content: `# Library rules: ${id}\n\n${block}\n`,
+    });
+  });
+
+  // Skills: universal + language/framework/library/domain, tách file riêng
+  // Universal skills
+  cliFiles.push({
+    dir: "skills/ai-contexts",
+    filename: "universal.md",
+    content: `${SKILLS_AGENT_UNIVERSAL}\n`,
+  });
+
+  // Language skill
+  if (language && SKILLS_AGENT_BY_LANGUAGE[language]) {
+    const skill = SKILLS_AGENT_BY_LANGUAGE[language];
+    cliFiles.push({
+      dir: "skills/ai-contexts",
+      filename: `language-${language}.md`,
+      content: `${formatSkillToMarkdown(skill)}\n`,
+    });
+  }
+
+  // Framework skills
+  frameworks.forEach((id) => {
+    const skill = SKILLS_AGENT_BY_FRAMEWORK[id];
+    if (!skill) return;
+    cliFiles.push({
+      dir: "skills/ai-contexts",
+      filename: `framework-${id}.md`,
+      content: `${formatSkillToMarkdown(skill)}\n`,
+    });
+  });
+
+  // Library skills
+  libraries.forEach((id) => {
+    const skill = SKILLS_AGENT_BY_LIBRARY[id];
+    if (!skill) return;
+    cliFiles.push({
+      dir: "skills/ai-contexts",
+      filename: `library-${id}.md`,
+      content: `${formatSkillToMarkdown(skill)}\n`,
+    });
+  });
+
+  // Domain skills (nếu config.domains tồn tại)
+  const domains = Array.isArray(config.domains) ? config.domains : [];
+  domains.forEach((id) => {
+    const skill = SKILLS_AGENT_BY_DOMAIN[id];
+    if (!skill) return;
+    cliFiles.push({
+      dir: "skills/ai-contexts",
+      filename: `domain-${id}.md`,
+      content: `${formatSkillToMarkdown(skill)}\n`,
+    });
+  });
 
   return {
     content,

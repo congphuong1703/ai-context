@@ -1,6 +1,6 @@
 {
   "name": "ai-contexts",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Generate AI rules and agent skills for your stack (Cursor, Claude, Windsurf, etc.)",
   "keywords": [
     "cursor",

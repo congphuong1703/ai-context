@@ -20,11 +20,15 @@ export function ResultPanel({
   const skillsContent = result.skillsContent ?? "";
   const promptsContent =
     result.promptsContent ?? (result.content.split("## 🤖 PROMPT TEMPLATES")[1] || "");
-  const tabContent =
-    tab === "rules" ? rulesContent : tab === "skills" ? skillsContent : promptsContent;
-  const tabLineCount = (
-    tab === "rules" ? rulesContent : tab === "skills" ? skillsContent : promptsContent
-  ).split("\n").length;
+
+  const getTabContent = (tabKey) => {
+    if (tabKey === "rules") return rulesContent;
+    if (tabKey === "skills") return skillsContent;
+    return promptsContent;
+  };
+
+  const tabContent = getTabContent(tab);
+  const tabLineCount = tabContent.split("\n").length;
   const downloadFilename =
     tab === "rules" ? result.filename : tab === "skills" ? "AGENTS.md" : "prompts.md";
   const npxPkg = "ai-contexts";

@@ -33,4 +33,12 @@ export {
 } from "./rules";
 
 /** Agent skills per step (language, framework, convention, library). IDE chỉ dùng cho gợi ý cài đặt. */
-export { getAgentSkillsForConfig } from "./skills";
+export {
+  getAgentSkillsForConfig,
+  SKILLS_AGENT_BY_LANGUAGE,
+  SKILLS_AGENT_BY_FRAMEWORK,
+  SKILLS_AGENT_BY_LIBRARY,
+  SKILLS_AGENT_BY_DOMAIN,
+  SKILLS_AGENT_UNIVERSAL,
+  formatSkillToMarkdown,
+} from "./skills";
