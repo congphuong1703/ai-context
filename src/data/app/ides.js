@@ -8,6 +8,9 @@ export const IDES = [
     label: "Cursor",
     desc: "AI-first editor, .cursorrules",
     file: ".cursorrules",
+    // Modern Cursor uses .cursor/rules/*.md(.mdc) for project rules
+    rulesDir: ".cursor/rules",
+    mainFileAtRoot: false,
     installHint:
       "Save this file in your project root. Cursor loads it automatically in Composer and Chat.",
   },
@@ -16,6 +19,9 @@ export const IDES = [
     label: "Claude Code",
     desc: "Anthropic CLI agent",
     file: "CLAUDE.md",
+    // Claude Code v2+: .claude/rules/*.md are auto-loaded
+    rulesDir: ".claude/rules",
+    mainFileAtRoot: true,
     installHint:
       "Save as CLAUDE.md in project root. Run with --continue so the agent sees this file.",
   },
@@ -31,6 +37,9 @@ export const IDES = [
     label: "Windsurf",
     desc: "Codeium AI editor",
     file: ".windsurfrules",
+    // Wave 8+: .windsurf/rules/*.md replaces legacy .windsurfrules
+    rulesDir: ".windsurf/rules",
+    mainFileAtRoot: false,
     installHint: "Save in project root. Use in Cascade for high-level tasks.",
   },
   {
@@ -38,6 +47,9 @@ export const IDES = [
     label: "GitHub Copilot",
     desc: "VS Code / JetBrains",
     file: ".github/copilot-instructions.md",
+    // Copilot repo-wide rules live under .github/
+    rulesDir: ".github",
+    mainFileAtRoot: true,
     installHint: "Save under .github/copilot-instructions.md. Use @workspace for context.",
   },
   {
@@ -79,7 +91,10 @@ export const IDES = [
     id: "jetbrains",
     label: "JetBrains AI",
     desc: "IntelliJ, WebStorm AI",
+    // JetBrains AI Assistant project rules in .aiassistant/rules/*.md
     file: ".ai-rules",
+    rulesDir: ".aiassistant/rules",
+    mainFileAtRoot: false,
     installHint: "Place in project root; use AI Assistant and @file for context.",
   },
   {

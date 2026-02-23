@@ -1,6 +1,6 @@
 {
-  "name": "ai-context",
-  "version": "0.1.0",
+  "name": "ai-contexts",
+  "version": "1.0.0",
   "description": "Generate AI rules and agent skills for your stack (Cursor, Claude, Windsurf, etc.)",
   "keywords": [
     "cursor",
@@ -14,7 +14,7 @@
   ],
   "license": "MIT",
   "bin": {
-    "ai-context": "./bin/cli.js"
+    "ai-contexts": "bin/cli.js"
   },
   "files": [
     "bin",

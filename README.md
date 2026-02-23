@@ -1,122 +1,166 @@
-# ai-context
+# AI Context
 
 [![GitHub stars](https://img.shields.io/github/stars/congphuong1703/ai-context?style=social)](https://github.com/congphuong1703/ai-context)
 
-**AI Context** is a small web app that generates **AI coding rules files** (e.g. `.cursorrules`, `CLAUDE.md`, `.github/copilot-instructions.md`) tailored to your stack. Pick language, framework, naming convention, lint/format preferences, and AI tool — then get a ready-to-paste rules file and optional NPX install command.
+Generate **AI coding rules files** (`.cursorrules`, `CLAUDE.md`, `.github/copilot-instructions.md`, …) for your stack. Pick language, framework, naming convention, and AI tool — get a ready-to-paste rules file or use the CLI.
 
 - **Open source** · No account required
 - **i18n**: English & Tiếng Việt
+- **Web** + **CLI** (`npx ai-contexts init`)
 
 ---
 
-## What it does
+## Features
 
-- Lets you **choose a preset template** (e.g. Next.js + Cursor, Python + Django + Claude) or **customize step by step** (language → framework → convention → AI tool).
-- **Generates a single rules file** with:
-  - Role & expertise
-  - Architecture, code quality, security, testing, error-handling rules
-  - Language- and framework-specific rules
-  - Naming convention (camel / snake / pascal / kebab)
-  - ESLint / Prettier required or optional
-  - IDE/AI-tool workflow notes
-  - Prompt templates (implement, review, refactor, debug, write tests)
-- Provides **Copy**, **Download**, and (when applicable) **NPX install** with the options you selected. Any step you skip is not forced to a default.
-
----
-
-## What it has
-
-- **Templates**: 10 preset stacks (Next.js, React, Python, Go+Gin, Rust+Axum, Django, Laravel, minimal, etc.) with full config (language, framework, convention, ESLint, Prettier, IDE).
-- **Customize wizard**: 4 steps — Programming language → Framework & library → Convention (naming + ESLint + Prettier) → AI coding tool. Skip any step; no default applied for skipped steps.
+- **Templates**: Preset stacks (Next.js + Cursor, React + Copilot, Python + FastAPI, …).
+- **Customize wizard**: Language → Framework & libraries → Convention (naming, ESLint, Prettier) → AI tool. Skip any step.
+- **Output**: One main rules file for your IDE + optional split files (naming, git, security, testing) in `.ai-context/`.
+- **CLI**: `npx ai-contexts@latest init --lang=... --frameworks=... --ide=...` from project root.
 - **Languages**: TypeScript, JavaScript, Python, Java, Kotlin, PHP, Go, Rust, C#, Ruby, Swift, Scala, Dart, Elixir, Lua, R.
-- **Frameworks**: Filtered by language (e.g. Next.js, React, Vue/Nuxt, NestJS, Django, FastAPI, Spring, Laravel, Gin, Axum, …).
-- **Conventions**: camelCase, snake_case, PascalCase, kebab-case.
-- **AI tools**: Cursor, Claude Code, Windsurf, GitHub Copilot, Continue, Cody, Zed, JetBrains AI, Codeium, Tabnine, Replit, v0, …
-- **Rules & skills**: Rule blocks and prompt templates live under `src/data/rules/` by type: `universal/`, `languages/`, `frameworks/`, `conventions/`, `ides/`, `libraries/`, `eslintPrettier/`, `uiStyling/`, `prompts/`.
-- **i18n**: UI in `src/messages/en.json` and `vi.json` (next-intl).
-- **Local fonts**: JetBrains Mono (and Geist for sans) — no Google Fonts CDN.
+- **AI tools**: Cursor, Claude Code, Windsurf, GitHub Copilot, Continue, Cody, Zed, JetBrains AI, and more.
 
 ---
 
-## How to use (as a visitor)
+## Quick start
 
-1. Open the site (e.g. [GitHub Pages / Vercel URL] or run locally — see **Install**).
-2. **Use a template**: Click **Use a template** → pick a preset (e.g. Next.js + Cursor) → **Generate Rules** → Copy or Download the file, or run the shown NPX command in your project root.
-3. **Customize**: Click **Customize step by step** → go through Language → Framework → Convention → AI tool (skip any step you like) → **Generate Rules** → Copy / Download / NPX as above.
-4. Put the generated file in your project root (e.g. `.cursorrules`). Your AI assistant will use it according to each tool’s docs.
+### Web
 
----
+1. Open the app (or run locally: `npm install && npm run dev` → [http://localhost:3000](http://localhost:3000)).
+2. Choose **Use a template** or **Customize step by step**.
+3. **Generate Rules** → Copy or Download (Rules / Skills / Prompts tabs).
+4. Put the main file in your project root; your AI assistant loads it per tool docs.
 
-## CLI (npm)
-
-You can generate a rules file from the terminal without opening the web app:
+### CLI
 
 ```bash
-npx ai-context@latest init --lang=typescript --frameworks=nestjs --convention=snake --ide=claude
+npx ai-contexts@latest init --lang=typescript --frameworks=nestjs --convention=snake --ide=claude
 ```
 
-Run from your **project root**. This creates:
+Run from your **project root**. Creates the main file (e.g. `CLAUDE.md`) and `.ai-context/` with split files: `naming-convention.md`, `git-commit.md`, `role-behavior.md`, `security.md`, `testing.md`.
 
-- One main file for your IDE (e.g. `CLAUDE.md`, `.cursorrules`) with the full rules.
-- A `.ai-context/` folder with split files: `naming-convention.md`, `git-commit.md`, `role-behavior.md`, `security.md`, `testing.md` so you can reference or edit them separately.
+**Options:** `--lang=<id>` · `--frameworks=<id1,id2>` · `--convention=<camel|snake|pascal|kebab>` · `--ide=<cursor|claude|...>` · `--eslint` · `--prettier` · `--libraries=<ids>` · `--force`
 
-**Options:** `--lang=<id>` · `--frameworks=<id1,id2>` · `--convention=<camel|snake|pascal|kebab>` · `--ide=<cursor|claude|windsurf|...>` · `--eslint` · `--prettier` · `--libraries=<id1,id2>` · `--force` (overwrite)
+---
+
+## Architecture (for contributors)
+
+High-level: a **Next.js app** (wizard UI) + a **CLI** (same logic via bundled `generateRules`). All wizard and rules data lives under `src/data/`; generation is in `src/lib/generateRules.js`.
+
+### Directory structure
+
+```
+ai-context/
+├── bin/cli.js              # CLI entry: parse args → generateOutput → write main + .ai-context/*
+├── scripts/build-cli.mjs   # esbuild: bundle src/lib/generateRules.js → dist/cli-bundle.cjs
+├── src/
+│   ├── app/                # Next.js routes: page.js, customize/page.js, template/page.js, layout.js
+│   ├── components/         # UI: HomePage, CustomizePage, TemplatePage, WizardSteps, ResultPanel, …
+│   ├── data/               # Single source of truth (see below)
+│   ├── hooks/              # useWizardData, useGitHubStars
+│   ├── lib/                # generateRules.js, dateFormats, devicon, optionIcons, utils, …
+│   ├── messages/           # en.json, vi.json (next-intl)
+│   ├── providers/          # AppProvider, I18nProvider, QueryProvider
+│   └── stores/             # useAppStore (optional)
+├── public/                 # Icons (devicon SVGs), etc.
+└── fonts/                  # JetBrains Mono variable (layout.js)
+```
+
+### Data layer (`src/data/`)
+
+```
+src/data/
+├── index.js              # Re-exports app + rules + skills (single import for app & CLI bundle)
+├── app/                  # Wizard options & presets (no rule text)
+│   ├── index.js
+│   ├── languages.js      # LANGUAGES
+│   ├── frameworks.js     # FRAMEWORKS (per language)
+│   ├── libraries.js      # LIBRARIES
+│   ├── conventions.js    # CONVENTIONS, getDefaultConventionForLanguage
+│   ├── ides.js           # IDES (id, label, file, installHint)
+│   ├── stackTemplates.js  # STACK_TEMPLATES (preset configs)
+│   ├── steps.js          # STEPS, DEFAULTS
+│   └── aiTools.js        # AI_TOOLS, AI_MODELS
+├── rules/                # Rule text by category (concatenated into output)
+│   ├── index.js          # Exports RULES_* and SKILLS_PROMPT_TEMPLATES
+│   ├── universal/        # roleBehavior, architecture, security, testing, gitCollaboration, …
+│   ├── languages/        # One file per language (e.g. typescript.js, python.js)
+│   ├── frameworks/       # One file per framework (e.g. nextjs.js, nestjs.js)
+│   ├── conventions/      # RULES_BY_CONVENTION (camel, snake, pascal, kebab), fallback
+│   ├── libraries/        # tailwind, shadcn, zod, react-query, pytest, …
+│   ├── eslintPrettier/   # eslintRequired, eslintOptional, prettierRequired, prettierOptional
+│   ├── uiStyling/        # When tailwind/shadcn selected
+│   └── prompts/          # implement, review, refactor, debug, test (SKILLS_PROMPT_TEMPLATES)
+└── skills/               # Agent skills (markdown blocks per language/framework/domain/library)
+    ├── index.js          # getAgentSkillsForConfig(config)
+    ├── universal/        # universalSkills, skillStandard
+    ├── languages/        # One file per language
+    ├── frameworks/       # One file per framework
+    ├── conventions/      # camel, snake, pascal, kebab (optional; rules handle naming)
+    ├── domains/          # saas, ecommerce, ai-agent
+    └── libraries/       # tailwind, shadcn, zod, …
+```
+
+### Where to change what
+
+| You want to…                                                      | Edit here                                                                                                                                                   |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add a **language** (wizard option + rules)                        | `src/data/app/languages.js` · `src/data/rules/languages/<id>.js` · `src/data/skills/languages/<id>.js` · `src/data/app/frameworks.js` (add to language key) |
+| Add a **framework** (wizard + rules)                              | `src/data/app/frameworks.js` · `src/data/rules/frameworks/<id>.js` · `src/data/skills/frameworks/<id>.js`                                                   |
+| Add an **AI tool / IDE** (file name, install hint)                | `src/data/app/ides.js`                                                                                                                                      |
+| Add a **library** (e.g. Tailwind, Zod)                            | `src/data/app/libraries.js` · `src/data/rules/libraries/<id>.js` · `src/data/skills/libraries/<id>.js`                                                      |
+| Add or edit **universal rules** (role, security, git, testing, …) | `src/data/rules/universal/<name>.js` and `universal/index.js`                                                                                               |
+| Add or edit **naming convention** rules                           | `src/data/rules/conventions/index.js`                                                                                                                       |
+| Add or edit **prompt templates** (implement, review, …)           | `src/data/rules/prompts/*.js` and `rules/prompts/index.js`                                                                                                  |
+| Add a **preset template**                                         | `src/data/app/stackTemplates.js` (full config: language, framework, convention, eslint, prettier, ide)                                                      |
+| Change **default convention by language**                         | `src/data/app/conventions.js` (`DEFAULT_CONVENTION_BY_LANGUAGE`, `getDefaultConventionForLanguage`)                                                         |
+| Change **output assembly** (what goes in main file, split files)  | `src/lib/generateRules.js`                                                                                                                                  |
+| Add **CLI flags or behavior**                                     | `bin/cli.js` (parse args) · `src/lib/generateRules.js` if output shape changes                                                                              |
+| UI / wizard flow / copy                                           | `src/components/*` · `src/messages/en.json`, `vi.json`                                                                                                      |
+
+### Generation flow
+
+1. **Web**: User completes wizard → `CustomizePage` / `TemplatePage` calls `generateOutput(config)` → `ResultPanel` shows `rulesContent`, `skillsContent`, `promptsContent` (tabs) and allows copy/download per tab.
+2. **CLI**: `bin/cli.js` parses argv → `generateOutput(config)` from `dist/cli-bundle.cjs` → writes main file + `cliFiles[]` into `.ai-context/`.
+
+`generateOutput(config)` in `src/lib/generateRules.js` builds all content from `src/data` (rules, skills, prompts) and returns `{ content, filename, rulesContent, skillsContent, promptsContent, installHint, cliFiles }`.
 
 ---
 
 ## Install (developers)
 
-### Prerequisites
-
-- Node.js 18+
-- npm / yarn / pnpm / bun
-
-### Clone and run
-
-```bash
-git clone https://github.com/congphuong1703/ai-context.git
-cd ai-context
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
+- **Prerequisites**: Node.js 18+, npm / yarn / pnpm / bun
+- **Clone and run**: `git clone https://github.com/congphuong1703/ai-context.git` → `cd ai-context` → `npm install` → `npm run dev` → [http://localhost:3000](http://localhost:3000)
 
 ### Scripts
 
-| Command                | Description                                       |
-| ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | Start dev server                                  |
-| `npm run build`        | Production build                                  |
-| `npm run start`        | Start production server                           |
-| `npm run lint`         | Run ESLint                                        |
-| `npm run format`       | Run Prettier                                      |
-| `npm run format:check` | Check formatting                                  |
-| `npm run build:cli`    | Build CLI bundle (dist) for `npx ai-context init` |
+| Command                | Description                                                         |
+| ---------------------- | ------------------------------------------------------------------- |
+| `npm run dev`          | Dev server                                                          |
+| `npm run build`        | Production build                                                    |
+| `npm run start`        | Production server                                                   |
+| `npm run lint`         | ESLint                                                              |
+| `npm run format`       | Prettier write                                                      |
+| `npm run format:check` | Prettier check                                                      |
+| `npm run build:cli`    | Build CLI bundle → `dist/cli-bundle.cjs` (used by `prepublishOnly`) |
 
-### Conventions (for contributors)
+### Conventions
 
-- **Tailwind**: Prefer canonical class names (e.g. `overflow-hidden`). Use Tailwind CSS IntelliSense with **suggestCanonicalClasses** if available.
-- **i18n**: All UI strings in `src/messages/en.json` and `src/messages/vi.json`; app uses `next-intl` with locale from `AppProvider`.
-- **Data**: App data in `src/data/app/`; rules in `src/data/rules/` (per type). No separate API or JSON for wizard data.
+- **Tailwind**: Prefer canonical class names.
+- **i18n**: All UI strings in `src/messages/en.json` and `vi.json` (next-intl).
+- **Data**: No separate API; wizard and rules read from `src/data/`.
 
 ---
 
 ## Contribute
 
-1. **Fork** the repo and clone it.
-2. Create a **branch**: `git checkout -b feature/your-feature` or `fix/your-fix`.
-3. Make changes. Run `npm run lint` and `npm run format:check` (and fix if needed).
-4. **Commit** with a clear message (e.g. `feat: add Ruby on Rails template`).
-5. **Push** and open a **Pull Request** on [congphuong1703/ai-context](https://github.com/congphuong1703/ai-context).
+1. **Fork** and clone the repo.
+2. Create a branch: `git checkout -b feature/your-feature` or `fix/your-fix`.
+3. Make changes. Use the **Architecture** and **Where to change what** table above to edit the right files.
+4. Run `npm run lint` and `npm run format:check`.
+5. Commit with a clear message (e.g. `feat: add Ruby on Rails template`).
+6. Push and open a **Pull Request** on [congphuong1703/ai-context](https://github.com/congphuong1703/ai-context).
 
-Ideas to contribute:
-
-- New **templates** in `src/data/appData.js` (ensure each template has all steps: language, framework, convention, eslintRequired, prettierRequired, ide).
-- New **languages / frameworks / IDEs** in `src/data/app/` and (if needed) rules in `src/data/rules/` (e.g. `rules/languages/`, `rules/frameworks/`).
-- New or improved **rule blocks** or **prompt templates** in the matching folder under `src/data/rules/`.
-- **Translations**: extend or fix `src/messages/en.json` and `vi.json`.
-- **Docs**: fix or expand this README.
+Ideas: new templates (`stackTemplates.js`), new languages/frameworks/IDEs (data layer), new or improved rule/skill blocks (rules/ & skills/), translations (messages), docs.
 
 ---
 

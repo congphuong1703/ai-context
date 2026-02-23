@@ -27,7 +27,7 @@ export function ResultPanel({
   ).split("\n").length;
   const downloadFilename =
     tab === "rules" ? result.filename : tab === "skills" ? "AGENTS.md" : "prompts.md";
-  const npxPkg = "ai-context";
+  const npxPkg = "ai-contexts";
   const npxArgs = [];
   if (config.language != null) npxArgs.push(`--lang=${config.language}`);
   const fws = Array.isArray(config.frameworks)

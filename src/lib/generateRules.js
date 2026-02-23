@@ -141,27 +141,46 @@ ${promptsBlock}
 
   const installHint = (ide && IDES.find((x) => x.id === ide)?.installHint) ?? null;
 
-  /** Split files for CLI: naming-convention, git-commit, role-behavior, security, testing */
+  // IDE-specific folder mapping (rulesDir + whether to still emit root file)
+  const ideEntry = ide ? IDES.find((x) => x.id === ide) : null;
+  const ideRulesDir = ideEntry && "rulesDir" in ideEntry ? (ideEntry.rulesDir ?? null) : null;
+  const ideMainFileAtRoot =
+    ideEntry && "mainFileAtRoot" in ideEntry ? ideEntry.mainFileAtRoot !== false : true;
+
+  /** Split files for CLI: rules + skills (relative to IDE's rulesDir when present).
+   * We always place our files under an `ai-contexts` subfolder so they are
+   * clearly separated from user-defined rules in the same IDE folder.
+   */
   const cliFiles = [
     {
+      dir: "ai-contexts",
       filename: "naming-convention.md",
       content: `# Naming convention\n\n${conventionRules}\n`,
     },
     {
+      dir: "ai-contexts",
       filename: "git-commit.md",
       content: `# Git & collaboration\n\n${RULES_GIT_COLLABORATION}\n`,
     },
     {
+      dir: "ai-contexts",
       filename: "role-behavior.md",
       content: `# Role & behavior\n\n${RULES_ROLE_BEHAVIOR}\n`,
     },
     {
+      dir: "ai-contexts",
       filename: "security.md",
       content: `# Security\n\n${RULES_SECURITY}\n`,
     },
     {
+      dir: "ai-contexts",
       filename: "testing.md",
       content: `# Testing\n\n${RULES_TESTING}\n`,
+    },
+    {
+      dir: "ai-contexts",
+      filename: "agents.md",
+      content: `# Agent skills\n\n${skillsContent}\n`,
     },
   ];
 
@@ -173,5 +192,7 @@ ${promptsBlock}
     promptsContent,
     installHint,
     cliFiles,
+    ideRulesDir,
+    ideMainFileAtRoot,
   };
 }

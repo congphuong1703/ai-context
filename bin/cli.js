@@ -5,10 +5,10 @@ const path = require("path");
 const fs = require("fs");
 
 const HELP = `
-ai-context init — Generate AI rules file for your project
+ai-contexts init — Generate AI rules file for your project
 
 Usage:
-  npx ai-context@latest init [options]
+  npx ai-contexts@latest init [options]
 
 Options:
   --lang=<id>           Language (e.g. typescript, python). Default: typescript
@@ -22,8 +22,8 @@ Options:
   --help, -h            Show this help
 
 Examples:
-  npx ai-context@latest init --lang=typescript --frameworks=nestjs --convention=snake --ide=claude
-  npx ai-context@latest init --lang=python --frameworks=fastapi --ide=cursor
+  npx ai-contexts@latest init --lang=typescript --frameworks=nestjs --convention=snake --ide=claude
+  npx ai-contexts@latest init --lang=python --frameworks=fastapi --ide=cursor
 `.trim();
 
 function parseArgs(argv) {
@@ -115,15 +115,28 @@ function main() {
   const { generateOutput } = require(bundlePath);
   const result = generateOutput(config);
   const cwd = process.cwd();
-  const splitDir = path.join(cwd, ".ai-context");
+  const rulesDir = result.ideRulesDir ?? null;
+  const mainFileAtRoot = result.ideMainFileAtRoot !== false;
 
-  const mainPath = path.join(cwd, result.filename);
-  const allPaths = [mainPath];
-  if (result.cliFiles && result.cliFiles.length > 0) {
-    for (const { filename } of result.cliFiles) {
-      allPaths.push(path.join(splitDir, filename));
+  const allPaths = [];
+  let mainPath = null;
+  if (mainFileAtRoot) {
+    // For Copilot, main file should live under .github/
+    if (rulesDir && config.ide === "copilot") {
+      mainPath = path.join(cwd, rulesDir, result.filename);
+    } else {
+      mainPath = path.join(cwd, result.filename);
+    }
+    allPaths.push(mainPath);
+  }
+
+  if (rulesDir && result.cliFiles && result.cliFiles.length > 0) {
+    for (const { dir, filename } of result.cliFiles) {
+      const rel = dir ? path.join(dir, filename) : filename;
+      allPaths.push(path.join(cwd, rulesDir, rel));
     }
   }
+
   const existing = allPaths.filter((p) => fs.existsSync(p));
   if (existing.length > 0 && !force) {
     console.error(
@@ -139,11 +152,14 @@ function main() {
     console.log(`Created ${label}`);
   };
 
-  writeFile(mainPath, result.content, result.filename);
+  if (mainFileAtRoot && mainPath) {
+    writeFile(mainPath, result.content, result.filename);
+  }
 
-  if (result.cliFiles && result.cliFiles.length > 0) {
-    for (const { filename, content } of result.cliFiles) {
-      writeFile(path.join(splitDir, filename), content, ".ai-context/" + filename);
+  if (rulesDir && result.cliFiles && result.cliFiles.length > 0) {
+    for (const { dir, filename, content } of result.cliFiles) {
+      const rel = dir ? path.join(dir, filename) : filename;
+      writeFile(path.join(cwd, rulesDir, rel), content, `${rulesDir}/${rel}`);
     }
   }
 
