@@ -6,13 +6,16 @@ import {
   RULES_BY_FRAMEWORK,
   RULES_BY_CONVENTION,
   RULES_CONVENTION_FALLBACK,
-  RULES_BY_IDE,
   RULES_BY_LIBRARY,
   RULES_UNIVERSAL_FOUNDATION,
   RULES_ESLINT_PRETTIER,
   RULES_UI_STYLING,
   SKILLS_PROMPT_TEMPLATES,
   getAgentSkillsForConfig,
+  RULES_GIT_COLLABORATION,
+  RULES_ROLE_BEHAVIOR,
+  RULES_SECURITY,
+  RULES_TESTING,
 } from "@/data";
 import { formatDate } from "@/lib/dateFormats";
 
@@ -47,7 +50,7 @@ export function generateOutput(config) {
     .map((id) => RULES_BY_LIBRARY[id] || "")
     .filter(Boolean)
     .join("\n\n");
-  const agentSkills = getAgentSkillsForConfig(config);
+  const agentSkillsBlock = getAgentSkillsForConfig(config);
   const hasUiStack = libraries.some((id) => id === "tailwind" || id === "shadcn");
   const uiStylingBlock = hasUiStack ? RULES_UI_STYLING : "";
   const conventionRules =
@@ -60,21 +63,50 @@ export function generateOutput(config) {
   const prettierBlock = prettierRequired
     ? RULES_ESLINT_PRETTIER.prettierRequired
     : RULES_ESLINT_PRETTIER.prettierOptional;
-  const ideRules = ide ? RULES_BY_IDE[ide] || "" : "";
-
   const promptSectionTitle = ide
     ? `PROMPT TEMPLATES FOR ${IDE.toUpperCase()}`
     : "PROMPT TEMPLATES FOR AI TOOL";
   const promptSectionSub = ide
     ? `Copy these into ${IDE}'s AI interface`
     : "Copy these into your AI's interface";
-  const skillsBlock = [
+  const promptsBlock = [
     SKILLS_PROMPT_TEMPLATES.implement.replace(/\{filename\}/g, filename),
     SKILLS_PROMPT_TEMPLATES.review.replace(/\{filename\}/g, filename),
     SKILLS_PROMPT_TEMPLATES.refactor.replace(/\{filename\}/g, filename),
     SKILLS_PROMPT_TEMPLATES.debug.replace(/\{filename\}/g, filename),
     SKILLS_PROMPT_TEMPLATES.test.replace(/\{filename\}/g, filename),
   ].join("\n\n");
+
+  const rulesContent = `# ${filename}
+# Language: ${stack} | Naming: ${convention} | AI Tool: ${IDE}
+# ────────────────────────────────
+# Last updated: ${formatDate("ISO_DATE")}
+
+${RULES_UNIVERSAL_FOUNDATION}
+
+${langRules}
+
+${fwRules}
+
+${conventionRules}
+
+${libRules}
+
+${uiStylingBlock}
+
+${eslintBlock}
+
+${prettierBlock}
+`.trim();
+
+  const skillsContent = agentSkillsBlock.trim();
+
+  const promptsContent = `## ${promptSectionTitle}
+## ${promptSectionSub}
+## ─────────────────────────────────────────────────────
+
+${promptsBlock}
+`.trim();
 
   const content = `# ${filename}
 # Language: ${stack} | Naming: ${convention} | AI Tool: ${IDE}
@@ -89,7 +121,7 @@ ${fwRules}
 
 ${conventionRules}
 
-${agentSkills}
+${agentSkillsBlock}
 
 ${libRules}
 
@@ -99,15 +131,47 @@ ${eslintBlock}
 
 ${prettierBlock}
 
-${ideRules}
-
 ## ─────────────────────────────────────────────────────
 ## 🤖 ${promptSectionTitle}
 ## ${promptSectionSub}
 ## ─────────────────────────────────────────────────────
 
-${skillsBlock}
+${promptsBlock}
 `;
 
-  return { content, filename };
+  const installHint = (ide && IDES.find((x) => x.id === ide)?.installHint) ?? null;
+
+  /** Split files for CLI: naming-convention, git-commit, role-behavior, security, testing */
+  const cliFiles = [
+    {
+      filename: "naming-convention.md",
+      content: `# Naming convention\n\n${conventionRules}\n`,
+    },
+    {
+      filename: "git-commit.md",
+      content: `# Git & collaboration\n\n${RULES_GIT_COLLABORATION}\n`,
+    },
+    {
+      filename: "role-behavior.md",
+      content: `# Role & behavior\n\n${RULES_ROLE_BEHAVIOR}\n`,
+    },
+    {
+      filename: "security.md",
+      content: `# Security\n\n${RULES_SECURITY}\n`,
+    },
+    {
+      filename: "testing.md",
+      content: `# Testing\n\n${RULES_TESTING}\n`,
+    },
+  ];
+
+  return {
+    content,
+    filename,
+    rulesContent,
+    skillsContent,
+    promptsContent,
+    installHint,
+    cliFiles,
+  };
 }

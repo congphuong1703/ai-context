@@ -28,7 +28,7 @@ export function TemplateStep({ selectedId, onSelect }) {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-ink">{tmpl.name}</div>
-                    <div className="text-xs text-ink3 mt-0.5 font-mono">{tmpl.desc}</div>
+                    <div className="text-sm text-ink3 mt-0.5 font-mono">{tmpl.desc}</div>
                   </div>
                 </div>
                 <OptionCardCheck selected={selectedId === tmpl.id} />

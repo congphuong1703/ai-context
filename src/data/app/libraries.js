@@ -17,6 +17,24 @@ export const LIBRARIES = [
     languages: ["typescript", "javascript"],
   },
   {
+    id: "ant-design",
+    label: "Ant Design",
+    desc: "React UI component library",
+    languages: ["typescript", "javascript"],
+  },
+  {
+    id: "ant-design-vue",
+    label: "Ant Design Vue",
+    desc: "Vue UI component library",
+    languages: ["typescript", "javascript"],
+  },
+  {
+    id: "pinia",
+    label: "Pinia",
+    desc: "Vue state management",
+    languages: ["typescript", "javascript"],
+  },
+  {
     id: "zod",
     label: "Zod",
     desc: "Schema validation at boundaries",

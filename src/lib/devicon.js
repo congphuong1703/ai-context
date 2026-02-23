@@ -67,6 +67,19 @@ export const FRAMEWORK_DEVICON = {
   openresty: "nginx",
 };
 
+/** Library ids -> icon name (SVG in public/icons/<name>.svg) */
+export const LIBRARY_DEVICON = {
+  tailwind: "tailwind",
+  shadcn: "shadcn",
+  zod: "zod",
+  "react-query": "tanstack",
+  zustand: "zustand",
+  pydantic: "python",
+  pytest: null,
+  black: null,
+  ruff: null,
+};
+
 /** IDE/tool ids that have a devicon (vscode, jetbrains, etc.). Others fall back to Lucide. */
 export const IDE_DEVICON = {
   cursor: "cursor", // use Lucide
@@ -94,6 +107,12 @@ export function getLanguageIconUrl(languageId) {
 
 export function getFrameworkIconUrl(frameworkId) {
   const name = FRAMEWORK_DEVICON[frameworkId];
+  if (!name) return null;
+  return `${ICONS_BASE}/${name}.svg`;
+}
+
+export function getLibraryIconUrl(libraryId) {
+  const name = LIBRARY_DEVICON[libraryId];
   if (!name) return null;
   return `${ICONS_BASE}/${name}.svg`;
 }

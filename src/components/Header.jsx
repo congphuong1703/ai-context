@@ -25,7 +25,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="p-2 rounded-lg hover:bg-surface2 text-ink2 hover:text-ink transition-colors"
+          className="p-2 rounded-lg hover:bg-surface2 text-ink2 hover:text-ink transition-colors cursor-pointer"
           title={theme === "dark" ? "Light mode" : "Dark mode"}
           aria-label={theme === "dark" ? "Switch to light" : "Switch to dark"}
         >
@@ -34,7 +34,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => setLocale(locale === "en" ? "vi" : "en")}
-          className="flex items-center gap-1.5 p-2 rounded-lg hover:bg-surface2 text-ink2 hover:text-ink transition-colors"
+          className="flex items-center gap-1.5 p-2 rounded-lg hover:bg-surface2 text-ink2 hover:text-ink transition-colors cursor-pointer"
           title={locale === "en" ? "Tiếng Việt" : "English"}
         >
           <Globe className="w-4 h-4" />

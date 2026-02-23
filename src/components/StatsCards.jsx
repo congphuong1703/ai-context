@@ -26,7 +26,7 @@ export function StatsCards() {
           </div>
           <div>
             <div className="text-2xl font-bold text-ink tabular-nums">{count()}</div>
-            <div className="text-xs text-ink3 font-medium">{t(key)}</div>
+            <div className="text-sm text-ink3 font-medium">{t(key)}</div>
           </div>
         </div>
       ))}

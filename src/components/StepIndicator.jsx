@@ -24,7 +24,7 @@ export function StepIndicator({ step }) {
         return (
           <div
             key={s.id}
-            className={`flex flex-col items-center gap-2 relative flex-1 max-w-[100px] sm:max-w-[120px] z-[1] min-w-[60px] ${i < step ? "done" : ""} ${i === step ? "active" : ""}`}
+            className={`flex flex-col items-center gap-2 relative flex-1 max-w-[120px] sm:max-w-[140px] z-1 p-2 min-w-[80px] ${i < step ? "done" : ""} ${i === step ? "active" : ""}`}
           >
             <div
               className={`
@@ -53,7 +53,7 @@ export function StepIndicator({ step }) {
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className="absolute top-[18px] left-[calc(50%+18px)] right-[calc(-50%+18px)] h-px transition-colors duration-300 z-0"
+                className="absolute top-[28px] left-[calc(50%+18px)] right-[calc(-50%+18px)] h-px transition-colors duration-300 z-0"
                 style={{ background: i < step ? "var(--accent)" : "var(--border)" }}
               />
             )}

@@ -1,0 +1,4 @@
+{
+  "tailwindCSS.rootFontSize": 17,
+  "tailwindCSS.lint.suggestCanonicalClasses": "warning"
+}

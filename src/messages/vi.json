@@ -42,6 +42,8 @@
     "templatesCount": "Template",
     "conventionsCount": "Convention",
     "toolsCount": "Công cụ AI",
+    "tabRules": "Rules",
+    "tabSkills": "Skills",
     "promptTemplates": "Mẫu prompt",
     "backToChoice": "Quay lại chọn",
     "footerGitHub": "GitHub",

@@ -32,7 +32,7 @@
 - **Frameworks**: Filtered by language (e.g. Next.js, React, Vue/Nuxt, NestJS, Django, FastAPI, Spring, Laravel, Gin, Axum, …).
 - **Conventions**: camelCase, snake_case, PascalCase, kebab-case.
 - **AI tools**: Cursor, Claude Code, Windsurf, GitHub Copilot, Continue, Cody, Zed, JetBrains AI, Codeium, Tabnine, Replit, v0, …
-- **Rules & skills**: All rule blocks and prompt templates are grouped by type in `src/data/rulesAndSkills.js` (by language, framework, convention, IDE, core, prompts).
+- **Rules & skills**: Rule blocks and prompt templates live under `src/data/rules/` by type: `universal/`, `languages/`, `frameworks/`, `conventions/`, `ides/`, `libraries/`, `eslintPrettier/`, `uiStyling/`, `prompts/`.
 - **i18n**: UI in `src/messages/en.json` and `vi.json` (next-intl).
 - **Local fonts**: JetBrains Mono (and Geist for sans) — no Google Fonts CDN.
 
@@ -44,6 +44,23 @@
 2. **Use a template**: Click **Use a template** → pick a preset (e.g. Next.js + Cursor) → **Generate Rules** → Copy or Download the file, or run the shown NPX command in your project root.
 3. **Customize**: Click **Customize step by step** → go through Language → Framework → Convention → AI tool (skip any step you like) → **Generate Rules** → Copy / Download / NPX as above.
 4. Put the generated file in your project root (e.g. `.cursorrules`). Your AI assistant will use it according to each tool’s docs.
+
+---
+
+## CLI (npm)
+
+You can generate a rules file from the terminal without opening the web app:
+
+```bash
+npx ai-context@latest init --lang=typescript --frameworks=nestjs --convention=snake --ide=claude
+```
+
+Run from your **project root**. This creates:
+
+- One main file for your IDE (e.g. `CLAUDE.md`, `.cursorrules`) with the full rules.
+- A `.ai-context/` folder with split files: `naming-convention.md`, `git-commit.md`, `role-behavior.md`, `security.md`, `testing.md` so you can reference or edit them separately.
+
+**Options:** `--lang=<id>` · `--frameworks=<id1,id2>` · `--convention=<camel|snake|pascal|kebab>` · `--ide=<cursor|claude|windsurf|...>` · `--eslint` · `--prettier` · `--libraries=<id1,id2>` · `--force` (overwrite)
 
 ---
 
@@ -67,20 +84,21 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Scripts
 
-| Command                | Description             |
-| ---------------------- | ----------------------- |
-| `npm run dev`          | Start dev server        |
-| `npm run build`        | Production build        |
-| `npm run start`        | Start production server |
-| `npm run lint`         | Run ESLint              |
-| `npm run format`       | Run Prettier            |
-| `npm run format:check` | Check formatting        |
+| Command                | Description                                       |
+| ---------------------- | ------------------------------------------------- |
+| `npm run dev`          | Start dev server                                  |
+| `npm run build`        | Production build                                  |
+| `npm run start`        | Start production server                           |
+| `npm run lint`         | Run ESLint                                        |
+| `npm run format`       | Run Prettier                                      |
+| `npm run format:check` | Check formatting                                  |
+| `npm run build:cli`    | Build CLI bundle (dist) for `npx ai-context init` |
 
 ### Conventions (for contributors)
 
 - **Tailwind**: Prefer canonical class names (e.g. `overflow-hidden`). Use Tailwind CSS IntelliSense with **suggestCanonicalClasses** if available.
 - **i18n**: All UI strings in `src/messages/en.json` and `src/messages/vi.json`; app uses `next-intl` with locale from `AppProvider`.
-- **Data**: Single source in `src/data/appData.js`; rules/skills in `src/data/rulesAndSkills.js`. No separate API or JSON for wizard data.
+- **Data**: App data in `src/data/app/`; rules in `src/data/rules/` (per type). No separate API or JSON for wizard data.
 
 ---
 
@@ -95,8 +113,8 @@ Open [http://localhost:3000](http://localhost:3000).
 Ideas to contribute:
 
 - New **templates** in `src/data/appData.js` (ensure each template has all steps: language, framework, convention, eslintRequired, prettierRequired, ide).
-- New **languages / frameworks / IDEs** in `appData.js` and (if needed) rules in `src/data/rulesAndSkills.js`.
-- New or improved **rule blocks** or **prompt templates** in `rulesAndSkills.js`.
+- New **languages / frameworks / IDEs** in `src/data/app/` and (if needed) rules in `src/data/rules/` (e.g. `rules/languages/`, `rules/frameworks/`).
+- New or improved **rule blocks** or **prompt templates** in the matching folder under `src/data/rules/`.
 - **Translations**: extend or fix `src/messages/en.json` and `vi.json`.
 - **Docs**: fix or expand this README.
 

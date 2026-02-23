@@ -16,6 +16,17 @@ export function ResultPanel({
 }) {
   const t = useTranslations("common");
   const [tab, setTab] = useState("rules");
+  const rulesContent = result.rulesContent ?? result.content;
+  const skillsContent = result.skillsContent ?? "";
+  const promptsContent =
+    result.promptsContent ?? (result.content.split("## 🤖 PROMPT TEMPLATES")[1] || "");
+  const tabContent =
+    tab === "rules" ? rulesContent : tab === "skills" ? skillsContent : promptsContent;
+  const tabLineCount = (
+    tab === "rules" ? rulesContent : tab === "skills" ? skillsContent : promptsContent
+  ).split("\n").length;
+  const downloadFilename =
+    tab === "rules" ? result.filename : tab === "skills" ? "AGENTS.md" : "prompts.md";
   const npxPkg = "ai-context";
   const npxArgs = [];
   if (config.language != null) npxArgs.push(`--lang=${config.language}`);
@@ -52,7 +63,7 @@ export function ResultPanel({
         <div className="flex flex-wrap items-center gap-2 mb-5 p-4 px-5 bg-accent/10 border border-accent/20 rounded-[10px]">
           {summaryChips.map((s, i, arr) => (
             <span key={`${s}-${i}`} className="flex items-center gap-2">
-              <span className="py-1 px-3 rounded-full bg-accent/20 border border-accent/30 text-xs font-semibold text-accent font-mono">
+              <span className="py-1 px-3 rounded-full bg-accent/20 border border-accent/30 text-sm font-semibold text-accent font-mono">
                 {s}
               </span>
               {i < arr.length - 1 && <span className="text-ink3 text-sm">›</span>}
@@ -65,19 +76,19 @@ export function ResultPanel({
         {/* Code panel */}
         <div className="bg-surface border border-border rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between py-3.5 px-5 border-b border-border bg-bg2">
-            <div className="flex items-center gap-2.5 font-mono text-xs text-ink2">
+            <div className="flex items-center gap-2.5 font-mono text-sm text-ink2">
               <span className="w-2 h-2 rounded-full bg-green" />
-              <span className="font-semibold text-green">{result.filename}</span>
-              <span className="text-ink3">{result.content.split("\n").length} lines</span>
+              <span className="font-semibold text-green">{downloadFilename}</span>
+              <span className="text-ink3">{tabLineCount} lines</span>
             </div>
             <div className="flex gap-2">
               <button
-                className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-md text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-md text-sm font-semibold transition-all cursor-pointer ${
                   copied.code
                     ? "bg-green text-white dark:text-black"
                     : "border border-border2 bg-transparent text-ink2 hover:border-ink3 hover:text-ink"
                 }`}
-                onClick={() => onCopy(result.content, "code")}
+                onClick={() => onCopy(tabContent, "code")}
               >
                 {copied.code ? (
                   `✓ ${t("copied")}`
@@ -88,33 +99,34 @@ export function ResultPanel({
                 )}
               </button>
               <button
-                className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-md text-xs font-bold bg-accent text-white hover:opacity-90 transition-opacity"
-                onClick={onDownload}
+                className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-md text-sm font-bold bg-accent text-white hover:opacity-90 transition-opacity cursor-pointer"
+                onClick={() => onDownload(tabContent, downloadFilename)}
               >
                 <Download className="w-3.5 h-3.5" /> {t("download")}
               </button>
             </div>
           </div>
           <div className="flex gap-1 p-3 pt-3 pl-4">
-            {["rules", "prompts"].map((tabKey) => (
+            {[
+              { key: "rules", label: t("tabRules") },
+              { key: "skills", label: t("tabSkills") },
+            ].map(({ key, label }) => (
               <button
-                key={tabKey}
-                className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
-                  tab === tabKey
+                key={key}
+                className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                  tab === key
                     ? "bg-surface2 text-ink"
                     : "bg-transparent text-ink3 hover:text-ink2 hover:bg-surface2"
                 }`}
-                onClick={() => setTab(tabKey)}
+                onClick={() => setTab(key)}
               >
-                {tabKey === "rules" ? result.filename : t("promptTemplates")}
+                {label}
               </button>
             ))}
           </div>
-          <div className="overflow-y-auto max-h-[90vh] py-5 px-6">
+          <div className="overflow-y-auto max-h-[65vh] py-5 px-6">
             <pre className="font-mono text-sm leading-[1.8] text-ink2 whitespace-pre-wrap wrap-break-word">
-              {tab === "rules"
-                ? result.content
-                : result.content.split("## 🤖 PROMPT TEMPLATES")[1] || result.content}
+              {tabContent}
             </pre>
           </div>
         </div>
@@ -147,14 +159,14 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
           </div>
           <div>
             <div className="text-sm font-bold">{t("installViaNpx")}</div>
-            <div className="text-xs text-ink3 font-normal">{t("installNpxDesc")}</div>
+            <div className="text-sm text-ink3 font-normal">{t("installNpxDesc")}</div>
           </div>
         </div>
         <div className="p-4">
-          <div className="flex items-center justify-between gap-3 py-3 px-3.5 rounded-lg bg-bg2 border border-border font-mono text-xs text-green break-all">
+          <div className="flex items-center justify-between gap-3 py-3 px-3.5 rounded-lg bg-bg2 border border-border font-mono text-sm text-green break-all">
             <span>{npxCmd}</span>
             <button
-              className={`py-1 px-2.5 rounded border text-[10px] font-mono shrink-0 transition-colors ${
+              className={`py-1 px-2.5 rounded border text-[10px] font-mono shrink-0 transition-colors cursor-pointer ${
                 copied.npx
                   ? "border-green text-green"
                   : "border-border2 text-ink3 hover:border-green hover:text-green"
@@ -164,7 +176,7 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
               {copied.npx ? "✓" : "copy"}
             </button>
           </div>
-          <p className="mt-3 text-xs text-ink3 leading-[1.6]">
+          <p className="mt-3 text-sm text-ink3 leading-[1.6]">
             Run in your project root. Creates{" "}
             <code className="font-mono text-[11px] bg-surface2 px-1.5 py-0.5 rounded text-accent">
               {result.filename}
@@ -181,7 +193,7 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
           </div>
           <div>
             <div className="text-sm font-bold">{t("manualSetup")}</div>
-            <div className="text-xs text-ink3 font-normal">{t("manualDesc")}</div>
+            <div className="text-sm text-ink3 font-normal">{t("manualDesc")}</div>
           </div>
         </div>
         <div className="p-4">
@@ -231,14 +243,14 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
           </div>
           <div>
             <div className="text-sm font-bold">{t("teamSetup")}</div>
-            <div className="text-xs text-ink3 font-normal">Share rules across your team</div>
+            <div className="text-sm text-ink3 font-normal">Share rules across your team</div>
           </div>
         </div>
         <div className="p-4">
-          <div className="flex items-center justify-between gap-3 py-3 px-3.5 rounded-lg bg-bg2 border border-border font-mono text-xs text-green break-all mb-2.5">
+          <div className="flex items-center justify-between gap-3 py-3 px-3.5 rounded-lg bg-bg2 border border-border font-mono text-sm text-green break-all mb-2.5">
             <span>git add {result.filename} && git commit -m &quot;chore: add AI rules&quot;</span>
             <button
-              className={`py-1 px-2.5 rounded border text-[10px] font-mono shrink-0 transition-colors ${
+              className={`py-1 px-2.5 rounded border text-[10px] font-mono shrink-0 transition-colors cursor-pointer ${
                 copied.git
                   ? "border-green text-green"
                   : "border-border2 text-ink3 hover:border-green hover:text-green"
@@ -250,7 +262,7 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
               {copied.git ? "✓" : "copy"}
             </button>
           </div>
-          <p className="text-xs text-ink3 leading-[1.6]">
+          <p className="text-sm text-ink3 leading-[1.6]">
             Every teammate with {getIDE() ? `Cursor / ${getIDE()}` : "your AI editor"} will
             automatically use the same AI coding rules.
           </p>
@@ -259,7 +271,7 @@ function InstallPanel({ result, config, getIDE, npxCmd, copied, onCopy, onStartO
 
       <button
         type="button"
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-5 rounded-lg border-[1.5px] border-border2 bg-transparent text-ink2 font-sans text-sm font-semibold hover:border-ink3 hover:text-ink transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-5 rounded-lg border-[1.5px] border-border2 bg-transparent text-ink2 font-sans text-sm font-semibold hover:border-ink3 hover:text-ink transition-colors cursor-pointer"
         onClick={onStartOver}
       >
         <RotateCcw className="w-4 h-4" /> {t("startOver")}

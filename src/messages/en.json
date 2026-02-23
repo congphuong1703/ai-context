@@ -42,6 +42,8 @@
     "templatesCount": "Templates",
     "conventionsCount": "Conventions",
     "toolsCount": "AI Tools",
+    "tabRules": "Rules",
+    "tabSkills": "Skills",
     "promptTemplates": "Prompt Templates",
     "backToChoice": "Back to choice",
     "footerGitHub": "GitHub",

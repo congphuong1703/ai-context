@@ -6,7 +6,12 @@ import { DEFAULTS, CONVENTIONS } from "@/data";
 import { useTranslations } from "next-intl";
 import { Code2 } from "lucide-react";
 import { CONVENTION_ICONS, CONVENTION_SECTION_ICONS, IDE_ICONS } from "@/lib/optionIcons";
-import { getLanguageIconUrl, getIdeIconUrl, getFrameworkIconUrl } from "@/lib/devicon";
+import {
+  getLanguageIconUrl,
+  getIdeIconUrl,
+  getFrameworkIconUrl,
+  getLibraryIconUrl,
+} from "@/lib/devicon";
 
 function stepNum(step, total, t) {
   return t("stepNum", { step: step + 1, total });
@@ -43,7 +48,7 @@ export function StepLanguage({ config, set, data, stepIndex, totalSteps }) {
                   <OptionCardIcon
                     selected={config.language === lang.id}
                     color={lang.color}
-                    className="w-10! h-10! text-xs!"
+                    className="w-10! h-10! text-sm!"
                   >
                     {lang.icon}
                   </OptionCardIcon>
@@ -76,12 +81,12 @@ export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
     : config.framework
       ? [config.framework]
       : [];
-  const libraries = Array.isArray(config.libraries) ? config.libraries : [];
-  const libList = (data?.libraries ?? []).filter(
-    (lib) =>
-      !lib.languages ||
-      lib.languages.length === 0 ||
-      (config.language && lib.languages.includes(config.language))
+  const selectedLibraries = Array.isArray(config.libraries) ? config.libraries : [];
+  const availableLibraries = (data?.libraries ?? []).filter(
+    (library) =>
+      !library.languages ||
+      library.languages.length === 0 ||
+      (config.language && library.languages.includes(config.language))
   );
 
   return (
@@ -105,7 +110,7 @@ export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
               {config.language ? t("stepFrameworkDesc") : t("stepFrameworkSelectLanguageFirst")}
             </p>
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
               {fwList.map((fw) => {
                 const selected = frameworks.includes(fw.id);
                 return (
@@ -132,7 +137,7 @@ export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
                           <OptionCardCheck selected={selected} />
                         </div>
                         {fw.desc ? (
-                          <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">
+                          <div className="text-sm text-ink3 mt-1 leading-[1.4] font-normal">
                             {fw.desc}
                           </div>
                         ) : null}
@@ -144,30 +149,44 @@ export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
             </div>
           )}
         </section>
-        {libList.length > 0 && (
+        {availableLibraries.length > 0 && (
           <section>
             <h3 className="text-sm font-semibold text-ink2 mb-3">
               {t("stepLibraries") ?? "Libraries (chọn nhiều)"}
             </h3>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-              {libList.map((lib) => {
-                const selected = libraries.includes(lib.id);
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+              {availableLibraries.map((library) => {
+                const isLibrarySelected = selectedLibraries.includes(library.id);
                 return (
                   <OptionCard
-                    key={lib.id}
-                    selected={selected}
-                    onClick={() => set("libraries", toggleInArray(libraries, lib.id))}
+                    key={library.id}
+                    selected={isLibrarySelected}
+                    onClick={() => set("libraries", toggleInArray(selectedLibraries, library.id))}
                     className="p-4!"
                   >
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="text-sm font-bold text-ink tracking-tight">{lib.label}</div>
-                      <OptionCardCheck selected={selected} />
-                    </div>
-                    {lib.desc ? (
-                      <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">
-                        {lib.desc}
+                    <div className="flex items-center gap-3 mb-2">
+                      {getLibraryIconUrl(library.id) ? (
+                        <DeviconImg
+                          type="library"
+                          id={library.id}
+                          className="w-10 h-10 shrink-0"
+                          alt=""
+                        />
+                      ) : null}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="text-sm font-bold text-ink tracking-tight">
+                            {library.label}
+                          </div>
+                          <OptionCardCheck selected={isLibrarySelected} />
+                        </div>
+                        {library.desc ? (
+                          <div className="text-sm text-ink3 mt-1 leading-[1.4] font-normal">
+                            {library.desc}
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
+                    </div>
                   </OptionCard>
                 );
               })}
@@ -223,7 +242,7 @@ export function StepConvention({ config, set, data, stepIndex, totalSteps }) {
                     </div>
                     <OptionCardCheck selected={config.convention === c.id} />
                   </div>
-                  <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">{c.desc}</div>
+                  <div className="text-sm text-ink3 mt-1 leading-[1.4] font-normal">{c.desc}</div>
                 </OptionCard>
               );
             })}
@@ -244,7 +263,7 @@ export function StepConvention({ config, set, data, stepIndex, totalSteps }) {
                 <span className="text-sm font-bold text-ink">{t("eslintRequired")}</span>
                 <OptionCardCheck selected={config.eslintRequired === true} />
               </div>
-              <div className="text-xs text-ink3 mt-1">{t("rulesMustESLint")}</div>
+              <div className="text-sm text-ink3 mt-1">{t("rulesMustESLint")}</div>
             </OptionCard>
             <OptionCard
               selected={config.eslintRequired === false}
@@ -255,7 +274,7 @@ export function StepConvention({ config, set, data, stepIndex, totalSteps }) {
                 <span className="text-sm font-bold text-ink">{t("eslintOptional")}</span>
                 <OptionCardCheck selected={config.eslintRequired === false} />
               </div>
-              <div className="text-xs text-ink3 mt-1">{t("eslintOptionalDesc")}</div>
+              <div className="text-sm text-ink3 mt-1">{t("eslintOptionalDesc")}</div>
             </OptionCard>
           </div>
         </section>
@@ -274,7 +293,7 @@ export function StepConvention({ config, set, data, stepIndex, totalSteps }) {
                 <span className="text-sm font-bold text-ink">{t("prettierRequired")}</span>
                 <OptionCardCheck selected={config.prettierRequired === true} />
               </div>
-              <div className="text-xs text-ink3 mt-1">{t("rulesMustPrettier")}</div>
+              <div className="text-sm text-ink3 mt-1">{t("rulesMustPrettier")}</div>
             </OptionCard>
             <OptionCard
               selected={config.prettierRequired === false}
@@ -285,7 +304,7 @@ export function StepConvention({ config, set, data, stepIndex, totalSteps }) {
                 <span className="text-sm font-bold text-ink">{t("prettierOptional")}</span>
                 <OptionCardCheck selected={config.prettierRequired === false} />
               </div>
-              <div className="text-xs text-ink3 mt-1">{t("prettierOptionalDesc")}</div>
+              <div className="text-sm text-ink3 mt-1">{t("prettierOptionalDesc")}</div>
             </OptionCard>
           </div>
         </section>
@@ -310,7 +329,7 @@ export function StepIDE({ config, set, data, stepIndex, totalSteps }) {
         <div className="text-sm text-ink2 font-normal mb-8">{t("stepIDEDesc")}</div>
       </div>
       <div className="px-6 sm:px-8 pb-8">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           {list.map((ide) => {
             const iconUrl = getIdeIconUrl(ide.id);
             const Icon = IDE_ICONS[ide.id];
@@ -334,7 +353,7 @@ export function StepIDE({ config, set, data, stepIndex, totalSteps }) {
                   <div className="text-sm font-bold text-ink tracking-tight">{ide.label}</div>
                   <OptionCardCheck selected={config.ide === ide.id} />
                 </div>
-                <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">{ide.desc}</div>
+                <div className="text-sm text-ink3 mt-1 leading-[1.4] font-normal">{ide.desc}</div>
                 <div className="font-mono text-[10px] text-ink3 mt-2 py-1.5 px-2 bg-surface2 rounded inline-block">
                   {ide.file}
                 </div>

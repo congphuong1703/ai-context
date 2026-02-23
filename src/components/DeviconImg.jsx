@@ -1,10 +1,16 @@
 "use client";
 
-import { getLanguageIconUrl, getIdeIconUrl, getFrameworkIconUrl } from "@/lib/devicon";
+import {
+  getLanguageIconUrl,
+  getIdeIconUrl,
+  getFrameworkIconUrl,
+  getLibraryIconUrl,
+} from "@/lib/devicon";
 
 function getDeviconUrl(type, id) {
   if (type === "language") return getLanguageIconUrl(id);
   if (type === "framework") return getFrameworkIconUrl(id);
+  if (type === "library") return getLibraryIconUrl(id);
   if (type === "ide") return getIdeIconUrl(id);
   return null;
 }

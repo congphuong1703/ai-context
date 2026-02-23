@@ -9,26 +9,28 @@ export {
   LIBRARIES,
   IDES,
   CONVENTIONS,
+  getDefaultConventionForLanguage,
   STACK_TEMPLATES,
   AI_TOOLS,
   AI_MODELS,
 } from "./app";
 
-/** Universal foundation (role, architecture, quality, security, testing, etc.) */
-export { RULES_UNIVERSAL_FOUNDATION } from "./rules";
-
-/** Rules and skills by type (language, framework, convention, IDE, library, prompts) */
+/** Rules: universal foundation + by type (language, framework, convention, library, eslint/prettier, ui, prompts). IDE không có rule — chỉ gợi ý cài đặt. */
 export {
+  RULES_UNIVERSAL_FOUNDATION,
   RULES_BY_LANGUAGE,
   RULES_BY_FRAMEWORK,
   RULES_BY_CONVENTION,
   RULES_CONVENTION_FALLBACK,
-  RULES_BY_IDE,
   RULES_BY_LIBRARY,
   RULES_ESLINT_PRETTIER,
   RULES_UI_STYLING,
   SKILLS_PROMPT_TEMPLATES,
-} from "./rulesAndSkills";
+  RULES_GIT_COLLABORATION,
+  RULES_ROLE_BEHAVIOR,
+  RULES_SECURITY,
+  RULES_TESTING,
+} from "./rules";
 
-/** Agent skills per step (language, framework, convention, IDE, library) */
-export { getAgentSkillsForConfig } from "./skills/agent";
+/** Agent skills per step (language, framework, convention, library). IDE chỉ dùng cho gợi ý cài đặt. */
+export { getAgentSkillsForConfig } from "./skills";

@@ -1,7 +1,25 @@
 {
   "name": "ai-context",
   "version": "0.1.0",
-  "private": true,
+  "description": "Generate AI rules and agent skills for your stack (Cursor, Claude, Windsurf, etc.)",
+  "keywords": [
+    "cursor",
+    "claude",
+    "ai",
+    "rules",
+    "cursorrules",
+    "CLAUDE.md",
+    "windsurf",
+    "copilot"
+  ],
+  "license": "MIT",
+  "bin": {
+    "ai-context": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,7 +27,9 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:cli": "node scripts/build-cli.mjs",
+    "prepublishOnly": "npm run build:cli"
   },
   "lint-staged": {
     "*.{js,jsx,json,css,md}": [
@@ -38,6 +58,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
+    "esbuild": "^0.27.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",

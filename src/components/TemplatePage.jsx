@@ -73,11 +73,11 @@ export function TemplatePage() {
     setTimeout(() => setCopied((c) => ({ ...c, [key]: false })), 2000);
   };
 
-  const download = () => {
-    if (!result) return;
+  const download = (content = result?.content, filename = result?.filename) => {
+    if (!result || content == null) return;
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([result.content], { type: "text/plain" }));
-    a.download = result.filename;
+    a.href = URL.createObjectURL(new Blob([content], { type: "text/plain" }));
+    a.download = filename ?? result.filename;
     a.click();
   };
 
@@ -137,7 +137,7 @@ export function TemplatePage() {
                 <div className="flex items-center justify-end gap-3 px-6 sm:px-8 py-6 border-t border-border">
                   <button
                     type="button"
-                    className="flex items-center gap-2 py-3 px-6 rounded-lg border-none bg-accent text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 py-3 px-6 rounded-lg border-none bg-accent text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     onClick={doGenerate}
                     disabled={!selectedTemplateId}
                   >
