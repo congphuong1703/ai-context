@@ -3,6 +3,7 @@
 import {
   LANGUAGES,
   FRAMEWORKS,
+  LIBRARIES,
   IDES,
   CONVENTIONS,
   STACK_TEMPLATES,
@@ -13,6 +14,7 @@ import {
 const WIZARD_DATA = {
   languages: LANGUAGES,
   frameworks: FRAMEWORKS,
+  libraries: LIBRARIES,
   ides: IDES,
   conventions: CONVENTIONS,
   techStacks: [],

@@ -7,30 +7,49 @@ import {
   RULES_BY_CONVENTION,
   RULES_CONVENTION_FALLBACK,
   RULES_BY_IDE,
+  RULES_BY_LIBRARY,
   RULES_UNIVERSAL_FOUNDATION,
   RULES_ESLINT_PRETTIER,
   RULES_UI_STYLING,
   SKILLS_PROMPT_TEMPLATES,
+  getAgentSkillsForConfig,
 } from "@/data";
 import { formatDate } from "@/lib/dateFormats";
 
 export function generateOutput(config) {
   const language = config.language ?? null;
-  const framework = config.framework ?? null;
   const ide = config.ide ?? null;
   const convention = config.convention ?? null;
   const eslintRequired = config.eslintRequired ?? false;
   const prettierRequired = config.prettierRequired ?? false;
+  const frameworks = Array.isArray(config.frameworks)
+    ? config.frameworks
+    : config.framework
+      ? [config.framework]
+      : [];
+  const libraries = Array.isArray(config.libraries) ? config.libraries : [];
 
   const L = language ? LANGUAGES.find((x) => x.id === language)?.label || language : "—";
   const IDE = ide ? IDES.find((x) => x.id === ide)?.label || ide : "—";
   const list = language ? FRAMEWORKS[language] : null;
-  const F = framework && list ? list.find((x) => x.id === framework)?.label : null;
-  const stack = F ? `${L} + ${F}` : L;
+  const F_labels = frameworks
+    .map((id) => (list ? list.find((x) => x.id === id)?.label : null))
+    .filter(Boolean);
+  const stack = F_labels.length > 0 ? `${L} + ${F_labels.join(", ")}` : L;
   const filename = ide ? IDES.find((x) => x.id === ide)?.file || ".cursorrules" : ".cursorrules";
 
   const langRules = language ? RULES_BY_LANGUAGE[language] || "" : "";
-  const fwRules = framework ? RULES_BY_FRAMEWORK[framework] || "" : "";
+  const fwRules = frameworks
+    .map((id) => RULES_BY_FRAMEWORK[id] || "")
+    .filter(Boolean)
+    .join("\n\n");
+  const libRules = libraries
+    .map((id) => RULES_BY_LIBRARY[id] || "")
+    .filter(Boolean)
+    .join("\n\n");
+  const agentSkills = getAgentSkillsForConfig(config);
+  const hasUiStack = libraries.some((id) => id === "tailwind" || id === "shadcn");
+  const uiStylingBlock = hasUiStack ? RULES_UI_STYLING : "";
   const conventionRules =
     convention && RULES_BY_CONVENTION[convention]
       ? RULES_BY_CONVENTION[convention]
@@ -70,7 +89,11 @@ ${fwRules}
 
 ${conventionRules}
 
-${RULES_UI_STYLING}
+${agentSkills}
+
+${libRules}
+
+${uiStylingBlock}
 
 ${eslintBlock}
 

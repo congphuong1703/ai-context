@@ -66,7 +66,9 @@
     "statsSectionTitle": "Overview",
     "howItWorksSectionTitle": "How it works",
     "stepFramework": "Framework & library",
-    "stepFrameworkDesc": "Pick a framework or library for your language. Skip to omit.",
-    "stepFrameworkSelectLanguageFirst": "Select a programming language first."
+    "stepFrameworkDesc": "Pick frameworks and libraries for your language. You can select multiple. Skip to omit.",
+    "stepFrameworkSelectLanguageFirst": "Select a programming language first.",
+    "stepFrameworksMulti": "Frameworks (select multiple)",
+    "stepLibraries": "Libraries (select multiple)"
   }
 }

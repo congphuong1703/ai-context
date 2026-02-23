@@ -19,11 +19,18 @@ export function ResultPanel({
   const npxPkg = "ai-context";
   const npxArgs = [];
   if (config.language != null) npxArgs.push(`--lang=${config.language}`);
-  if (config.framework != null) npxArgs.push(`--framework=${config.framework}`);
+  const fws = Array.isArray(config.frameworks)
+    ? config.frameworks
+    : config.framework
+      ? [config.framework]
+      : [];
+  if (fws.length > 0) npxArgs.push(`--frameworks=${fws.join(",")}`);
   if (config.convention != null) npxArgs.push(`--convention=${config.convention}`);
   if (config.eslintRequired === true) npxArgs.push("--eslint");
   if (config.prettierRequired === true) npxArgs.push("--prettier");
   if (config.ide != null) npxArgs.push(`--ide=${config.ide}`);
+  const libs = Array.isArray(config.libraries) ? config.libraries : [];
+  if (libs.length > 0) npxArgs.push(`--libraries=${libs.join(",")}`);
   const npxCmd =
     npxArgs.length > 0
       ? `npx ${npxPkg}@latest init ${npxArgs.join(" ")}`
@@ -31,6 +38,8 @@ export function ResultPanel({
 
   const summaryChips = [
     getL() || null,
+    fws.length > 0 ? fws.join(", ") : null,
+    libs.length > 0 ? libs.join(", ") : null,
     config.convention ?? null,
     config.eslintRequired === true ? "ESLint" : null,
     config.prettierRequired === true ? "Prettier" : null,
@@ -101,8 +110,8 @@ export function ResultPanel({
               </button>
             ))}
           </div>
-          <div className="overflow-y-auto max-h-[100vh] py-5 px-6">
-            <pre className="font-mono text-xs leading-[1.8] text-ink2 whitespace-pre-wrap break-words">
+          <div className="overflow-y-auto max-h-[90vh] py-5 px-6">
+            <pre className="font-mono text-sm leading-[1.8] text-ink2 whitespace-pre-wrap wrap-break-word">
               {tab === "rules"
                 ? result.content
                 : result.content.split("## 🤖 PROMPT TEMPLATES")[1] || result.content}

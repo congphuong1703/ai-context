@@ -59,7 +59,9 @@
     "statsSectionTitle": "Tổng quan",
     "howItWorksSectionTitle": "Cách hoạt động",
     "stepFramework": "Framework & thư viện",
-    "stepFrameworkDesc": "Chọn framework/thư viện cho ngôn ngữ đã chọn. Bỏ qua nếu không cần.",
-    "stepFrameworkSelectLanguageFirst": "Hãy chọn ngôn ngữ lập trình trước."
+    "stepFrameworkDesc": "Chọn framework và thư viện cho ngôn ngữ đã chọn. Có thể chọn nhiều. Bỏ qua nếu không cần.",
+    "stepFrameworkSelectLanguageFirst": "Hãy chọn ngôn ngữ lập trình trước.",
+    "stepFrameworksMulti": "Frameworks (chọn nhiều)",
+    "stepLibraries": "Libraries (chọn nhiều)"
   }
 }

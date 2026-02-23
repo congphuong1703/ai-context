@@ -15,10 +15,12 @@ import { Footer } from "./Footer";
 const initialConfig = {
   language: null,
   framework: null,
+  frameworks: [],
   convention: null,
   eslintRequired: null,
   prettierRequired: null,
   ide: null,
+  libraries: [],
 };
 
 export function CustomizePage() {
@@ -37,10 +39,12 @@ export function CustomizePage() {
     const out = generateOutput({
       language: config.language,
       framework: config.framework,
+      frameworks: config.frameworks,
       convention: config.convention,
       eslintRequired: config.eslintRequired,
       prettierRequired: config.prettierRequired,
       ide: config.ide,
+      libraries: config.libraries,
     });
     setResult(out);
   }, [config]);
@@ -109,7 +113,7 @@ export function CustomizePage() {
       <div className="fixed w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(91,80,230,0.15)_0%,transparent_70%)] -top-[200px] -right-[200px] pointer-events-none z-0 animate-orb dark:bg-[radial-gradient(circle,rgba(108,99,255,0.12)_0%,transparent_70%)]" />
       <Header />
       <div className="relative z-[1] pt-[62px] min-h-screen flex flex-col">
-        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
+        <div className="mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
           {isResult ? (
             <div className="pt-10">
               <ResultPanel

@@ -16,8 +16,10 @@ export const TOTAL_STEPS = 4;
 export const DEFAULTS = {
   language: "typescript",
   framework: null,
+  frameworks: [],
   convention: null,
   eslintRequired: false,
   prettierRequired: false,
   ide: "cursor",
+  libraries: [],
 };

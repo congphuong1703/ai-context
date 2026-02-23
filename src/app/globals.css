@@ -153,6 +153,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 17px; /* base slightly larger for readability (default 16px) */
 }
 
 body {

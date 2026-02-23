@@ -62,10 +62,27 @@ export function StepLanguage({ config, set, data, stepIndex, totalSteps }) {
   );
 }
 
+function toggleInArray(arr, id) {
+  if (!Array.isArray(arr)) return [id];
+  return arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id];
+}
+
 export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
   const t = useTranslations("common");
-  const list =
+  const fwList =
     (data?.frameworks && config.language ? (data.frameworks[config.language] ?? []) : []) || [];
+  const frameworks = Array.isArray(config.frameworks)
+    ? config.frameworks
+    : config.framework
+      ? [config.framework]
+      : [];
+  const libraries = Array.isArray(config.libraries) ? config.libraries : [];
+  const libList = (data?.libraries ?? []).filter(
+    (lib) =>
+      !lib.languages ||
+      lib.languages.length === 0 ||
+      (config.language && lib.languages.includes(config.language))
+  );
 
   return (
     <>
@@ -78,39 +95,84 @@ export function StepFramework({ config, set, data, stepIndex, totalSteps }) {
         </div>
         <div className="text-sm text-ink2 font-normal mb-8">{t("stepFrameworkDesc")}</div>
       </div>
-      <div className="px-6 sm:px-8 pb-8">
-        {list.length === 0 ? (
-          <p className="text-sm text-ink3 py-4">
-            {config.language ? t("stepFrameworkDesc") : t("stepFrameworkSelectLanguageFirst")}
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-            {list.map((fw) => (
-              <OptionCard
-                key={fw.id}
-                selected={config.framework === fw.id}
-                onClick={() => set("framework", config.framework === fw.id ? null : fw.id)}
-                className="p-4!"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  {getFrameworkIconUrl(fw.id) ? (
-                    <DeviconImg type="framework" id={fw.id} className="w-10 h-10 shrink-0" alt="" />
-                  ) : null}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="text-sm font-bold text-ink tracking-tight">{fw.label}</div>
-                      <OptionCardCheck selected={config.framework === fw.id} />
+      <div className="px-6 sm:px-8 pb-8 space-y-8">
+        <section>
+          <h3 className="text-sm font-semibold text-ink2 mb-3">
+            {t("stepFrameworksMulti") ?? "Frameworks (chọn nhiều)"}
+          </h3>
+          {fwList.length === 0 ? (
+            <p className="text-sm text-ink3 py-4">
+              {config.language ? t("stepFrameworkDesc") : t("stepFrameworkSelectLanguageFirst")}
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+              {fwList.map((fw) => {
+                const selected = frameworks.includes(fw.id);
+                return (
+                  <OptionCard
+                    key={fw.id}
+                    selected={selected}
+                    onClick={() => set("frameworks", toggleInArray(frameworks, fw.id))}
+                    className="p-4!"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      {getFrameworkIconUrl(fw.id) ? (
+                        <DeviconImg
+                          type="framework"
+                          id={fw.id}
+                          className="w-10 h-10 shrink-0"
+                          alt=""
+                        />
+                      ) : null}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="text-sm font-bold text-ink tracking-tight">
+                            {fw.label}
+                          </div>
+                          <OptionCardCheck selected={selected} />
+                        </div>
+                        {fw.desc ? (
+                          <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">
+                            {fw.desc}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
-                    {fw.desc ? (
+                  </OptionCard>
+                );
+              })}
+            </div>
+          )}
+        </section>
+        {libList.length > 0 && (
+          <section>
+            <h3 className="text-sm font-semibold text-ink2 mb-3">
+              {t("stepLibraries") ?? "Libraries (chọn nhiều)"}
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+              {libList.map((lib) => {
+                const selected = libraries.includes(lib.id);
+                return (
+                  <OptionCard
+                    key={lib.id}
+                    selected={selected}
+                    onClick={() => set("libraries", toggleInArray(libraries, lib.id))}
+                    className="p-4!"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="text-sm font-bold text-ink tracking-tight">{lib.label}</div>
+                      <OptionCardCheck selected={selected} />
+                    </div>
+                    {lib.desc ? (
                       <div className="text-xs text-ink3 mt-1 leading-[1.4] font-normal">
-                        {fw.desc}
+                        {lib.desc}
                       </div>
                     ) : null}
-                  </div>
-                </div>
-              </OptionCard>
-            ))}
-          </div>
+                  </OptionCard>
+                );
+              })}
+            </div>
+          </section>
         )}
       </div>
     </>

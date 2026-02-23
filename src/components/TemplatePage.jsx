@@ -14,10 +14,12 @@ import { ChevronRight } from "lucide-react";
 const initialConfig = {
   language: null,
   framework: null,
+  frameworks: [],
   convention: null,
   eslintRequired: null,
   prettierRequired: null,
   ide: null,
+  libraries: [],
 };
 
 export function TemplatePage() {
@@ -29,13 +31,20 @@ export function TemplatePage() {
   const [copied, setCopied] = useState({});
 
   const applyConfig = useCallback((cfg) => {
+    const fws = Array.isArray(cfg.frameworks)
+      ? cfg.frameworks
+      : cfg.framework
+        ? [cfg.framework]
+        : [];
     setConfig({
       language: cfg.language ?? null,
       framework: cfg.framework ?? null,
+      frameworks: fws,
       convention: cfg.convention ?? null,
       eslintRequired: cfg.eslintRequired ?? null,
       prettierRequired: cfg.prettierRequired ?? null,
       ide: cfg.ide ?? null,
+      libraries: Array.isArray(cfg.libraries) ? cfg.libraries : [],
     });
   }, []);
 
@@ -46,11 +55,14 @@ export function TemplatePage() {
 
   const doGenerate = useCallback(() => {
     const out = generateOutput({
-      language: config.language ?? DEFAULTS.language,
-      convention: config.convention ?? DEFAULTS.convention,
-      eslintRequired: config.eslintRequired ?? DEFAULTS.eslintRequired,
-      prettierRequired: config.prettierRequired ?? DEFAULTS.prettierRequired,
-      ide: config.ide ?? DEFAULTS.ide,
+      language: config.language ?? null,
+      framework: config.framework ?? null,
+      frameworks: config.frameworks ?? [],
+      convention: config.convention ?? null,
+      eslintRequired: config.eslintRequired ?? null,
+      prettierRequired: config.prettierRequired ?? null,
+      ide: config.ide ?? null,
+      libraries: config.libraries ?? [],
     });
     setResult(out);
   }, [config]);
@@ -84,7 +96,7 @@ export function TemplatePage() {
     return (
       <>
         <Header />
-        <div className="relative z-[1] pt-[62px] min-h-screen flex items-center justify-center">
+        <div className="relative z-1 pt-[62px] min-h-screen flex items-center justify-center">
           <div className="font-mono text-ink3">Loading...</div>
         </div>
       </>
@@ -95,8 +107,8 @@ export function TemplatePage() {
     <>
       <div className="fixed w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(91,80,230,0.15)_0%,transparent_70%)] -top-[200px] -right-[200px] pointer-events-none z-0 animate-orb dark:bg-[radial-gradient(circle,rgba(108,99,255,0.12)_0%,transparent_70%)]" />
       <Header />
-      <div className="relative z-[1] pt-[62px] min-h-screen flex flex-col">
-        <div className="max-w-[960px] mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
+      <div className="relative z-1 pt-[62px] min-h-screen flex flex-col">
+        <div className="mx-auto px-6 pb-12 w-full flex-1 flex flex-col gap-5">
           {result ? (
             <div className="pt-8">
               <ResultPanel

@@ -302,6 +302,54 @@ export const RULES_BY_IDE = {
 - Keep design system consistent`,
 };
 
+/** Rules by library (Tailwind, shadcn, Zod, etc.) — append when user selects library */
+export const RULES_BY_LIBRARY = {
+  tailwind: `## Tailwind CSS
+- Utility-first only; no custom CSS unless necessary; use \`@apply\` sparingly
+- Prefer design tokens: \`bg-background\`, \`text-foreground\`, \`border-border\`, \`rounded-lg\`
+- Responsive: mobile-first (\`sm:\`, \`md:\`, \`lg:\`); dark mode via \`dark:\` when applicable
+- No arbitrary values for spacing/colors when a token exists`,
+
+  shadcn: `## shadcn/ui
+- Use components from \`@/components/ui\` — do not reinvent buttons, dialogs, forms
+- Use \`cn()\` from \`@/lib/utils\` for all className merging (clsx + tailwind-merge)
+- Add new components with \`npx shadcn@latest add [component]\` when possible
+- Keep variants and composition; do not inline one-off styles that belong in the component`,
+
+  zod: `## Zod
+- Validate at every external boundary: API responses, forms, env
+- Prefer \`.safeParse\` and handle both branches; use \`.parse\` only when failure is unrecoverable
+- Export inferred types: \`type T = z.infer<typeof schema>\``,
+
+  "react-query": `## TanStack Query
+- Server state in QueryClient; no duplicate fetch in component tree
+- Use queryKey as array with stable, serializable keys
+- Mutations invalidate or update related queries; handle loading/error in UI`,
+
+  zustand: `## Zustand
+- One store per domain or slice; avoid a single giant store
+- Prefer \`subscribeWithSelector\` when subscribing to slices
+- No side effects in \`set\`; use \`getState\` only when necessary`,
+
+  pydantic: `## Pydantic
+- Use for all request/response and config; no raw dicts at boundaries
+- Prefer \`model_validate\` and \`model_dump\`; use \`ConfigDict\` for strictness
+- Document fields with \`Field(description=...)\` for public APIs`,
+
+  pytest: `## pytest
+- Fixtures for shared setup; parametrize for multiple inputs
+- One assertion per test when possible; use \`pytest.raises\` for exceptions
+- Place tests in \`tests/\`; mirror source layout`,
+
+  black: `## Black
+- Format all code with Black; no manual formatting overrides
+- Line length per project (default 88); run \`black .\` before commit`,
+
+  ruff: `## Ruff
+- Use Ruff for lint and format; replace Flake8 / isort where applicable
+- Enable rule sets per \`pyproject.toml\`; fix auto-fixable on save`,
+};
+
 /** ESLint / Prettier rule blocks */
 export const RULES_ESLINT_PRETTIER = {
   eslintRequired: `## 📏 ESLint (REQUIRED)
